@@ -1,0 +1,184 @@
+// CASO: Recibir tweets para el feed
+// NODOS: TWEET, USER
+// RELACIONES: Retweeted, tweeted, liked,
+{
+    id: int
+    user: {
+        at: String (@)
+        name: String
+        is_profile_public: Boolean
+        is_blue: Boolean
+    }
+    timestamp: Date
+    has_media: Boolean
+    has_poll: Boolean
+    content: String
+    likes_amount: Integer
+    retweets_amount: Integer
+    replies_amount: Integer
+}
+
+// CASO: Crear cuenta
+// NODOS: USER
+{
+    tag: string,
+    username: string,
+    description: string,
+    birthdate: date,
+    joined_on: date,
+    is_profile_public: boolean
+}
+
+// CASO: Modificar cuenta
+// NODOS: USER
+{
+    tag: string,
+    description: string,
+    is_profile_public: boolean
+}
+
+// Ver perfil general
+//NODOS: USER-BLUE, LOCATION, TWEET
+//REL: FOLLOWS, LOCATED_IN, RETWEETED, TWEETED, LIKED
+{
+    tag: string,
+    username: string,
+    description: string,
+    birthdate: date,
+    joined_on: date,
+    is_profile_public: boolean,
+    located_in: {
+        timestamp: Date
+        currently_in: Boolean
+        lives_there: Boolean
+        location_name: String
+    }
+    following_amount: Integer,
+    followers_amount: Integer,
+    tweets: []
+}
+
+//Ver perfil pestaña "Publicaciones" (Pestaña predeterminada)
+{
+    tweets: [ //USANDO LAS RELACIONES: TWEETED, RETWEETED
+        id: int
+        user: {
+            at: String (@)
+            name: String
+            is_profile_public: Boolean
+            is_blue: Boolean
+        }
+        timestamp: Date
+        has_media: Boolean
+        has_poll: Boolean
+        content: String
+        likes_amount: Integer
+        retweets_amount: Integer
+        replies_amount: Integer
+    ]
+}
+
+//Ver perfil pestaña "Likes" 
+{
+    tweets: [ //USANDO LAS RELACIONES: LIKED
+        id: int
+        user: {
+            at: String (@)
+            name: String
+            is_profile_public: Boolean
+            is_blue: Boolean
+        }
+        timestamp: Date
+        has_media: Boolean
+        has_poll: Boolean
+        content: String
+        likes_amount: Integer
+        retweets_amount: Integer
+        replies_amount: Integer
+    ]
+}
+
+//Ver perfil pestaña "Media"
+{
+    tweets: [ //USANDO LAS RELACIONES: TWEETED con TWEETED.has_media = True
+        id: int
+        user: {
+            at: String (@)
+            name: String
+            is_profile_public: Boolean
+            is_blue: Boolean
+        }
+        timestamp: Date
+        has_media: Boolean
+        has_poll: Boolean
+        content: String
+        likes_amount: Integer
+        retweets_amount: Integer
+        replies_amount: Integer
+    ]
+}
+
+//Ver perfil pestaña "Respuestas"
+{
+    tweets: [ //USANDO LAS RELACIONES: TWEETED, REPLIES_TO
+        id: int
+        user: {
+            at: String (@)
+            name: String
+            is_profile_public: Boolean
+            is_blue: Boolean
+        }
+        timestamp: Date
+        has_media: Boolean
+        has_poll: Boolean
+        content: String
+        likes_amount: Integer
+        retweets_amount: Integer
+        replies_amount: Integer
+    ]
+}
+
+//CHAT DM
+//NODOS: CHAT, USER, MESSAGES
+//REL: PARTICIPATES_IN, SENT, IS_FROM   
+{
+    name:String,
+    receipt_name: String,
+    muted_mentions: Boolean,
+    messages: [
+        {
+            Order: Int, 
+            Read: Boolean,
+            Edited: Boolean,
+            sender: String
+        }
+    ]
+    
+}
+
+//CHAT GROUP
+//NODOS: CHAT, USER, MESSAGES
+//REL: IS_MEMBER, SENT, IS_FROM
+{
+    group_name:string,
+    members: [
+        {
+            username: string,
+        }
+    ],
+    messages: [
+        {
+            id: int, 
+            sender: string
+        }
+    ]
+}
+
+// LOCATION
+{
+    id: String,
+    name: String,
+    city: String,
+    country: String 
+    
+}
