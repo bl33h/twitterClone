@@ -12,12 +12,14 @@ def create_user_data(existing_tags):
         tag = fake.unique.user_name()
         
     username = fake.user_name()
+    blue = fake.boolean()
     description = fake.text(max_nb_chars=30)
     birthday = fake.date_of_birth(minimum_age=18, maximum_age=85).isoformat()
     joined_on = fake.date_this_decade().isoformat()
     is_profile_public = fake.boolean()
     return {
         "Tag": tag,
+        "Blue": blue,
         "Username": username,
         "Description": description,
         "Birthday": birthday,
@@ -26,7 +28,7 @@ def create_user_data(existing_tags):
     }
 
 csv_file_name = 'users.csv'
-headers = ["Tag", "Username", "Description", "Birthday", "Joined_on", "Is_profile_public"]
+headers = ["Tag", "Username", "Blue", "Description", "Birthday", "Joined_on", "Is_profile_public"]
 generated_tags = set()
 
 # write the data to the CSV file
