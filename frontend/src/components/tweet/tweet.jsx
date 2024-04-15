@@ -12,9 +12,12 @@ import {
 } from "../../assets/icons/icons";
 import './tweet.scss';
 
-function convertHashtagsToLinks(content) {
+function convertHashtagsAndMentionsToLinks(content) {
     const hashtagRegex = /#(\w+)/g;
-    return content.replace(hashtagRegex, '<a href="/hashtag/$1">#$1</a>');
+    const mentionRegex = /@(\w+)/g;
+    let newContent = content.replace(hashtagRegex, '<a href="javascript:void(0)">#$1</a>');
+    newContent = newContent.replace(mentionRegex, '<a href="javascript:void(0)">@$1</a>');
+    return newContent;
 }
 
 const Tweet = ({data}) => {
@@ -59,7 +62,7 @@ const Tweet = ({data}) => {
                         <button>{moreTweet}</button>
                     </div>
                 </div>
-                <div className={"tweet-content"} dangerouslySetInnerHTML={{__html: convertHashtagsToLinks(content)}}/>
+                <div className={"tweet-content"} dangerouslySetInnerHTML={{__html: convertHashtagsAndMentionsToLinks(content)}}/>
                 <div className={"interactions"}>
                     <div className={"replies"}>
                     {replies} <span>{replies_amount}</span>

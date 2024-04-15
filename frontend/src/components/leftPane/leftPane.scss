@@ -1,13 +1,15 @@
 @import "../components.scss";
 
 .left-pane {
+  position: sticky;
   background: $background-color;
   color: $text-color;
   min-height: 100vh;
 
-  //.container {
-  //  position: fixed;
-  //}
+  .container {
+    position: sticky;
+    top: 0;
+  }
 
   header {
     svg {
