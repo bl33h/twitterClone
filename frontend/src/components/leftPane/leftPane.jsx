@@ -9,28 +9,28 @@ const LeftPane = () => {
             <div className={"container"}>
                 <header>{twitter}</header>
                 <nav>
-                    <NavLink to={"/"}>
+                    <NavLink to={"/"} exact activeClassName="selected">
                         <span>{home} Home</span>
                     </NavLink>
-                    <NavLink to={"/explore"}>
+                    <NavLink to={"/explore"} activeClassName="selected">
                         <span>{explore} Explore</span>
                     </NavLink>
-                    <NavLink to={"/notifications"}>
+                    <NavLink to={"/notifications"} activeClassName="selected">
                         <span>{notifications} Notifications</span>
                     </NavLink>
-                    <NavLink to={"/messages"}>
+                    <NavLink to={"/messages"} activeClassName="selected">
                         <span>{messages} Messages</span>
                     </NavLink>
-                    <NavLink to={"/bookmarks"}>
+                    <NavLink to={"/bookmarks"} activeClassName="selected">
                         <span>{bookmarks} Bookmarks</span>
                     </NavLink>
-                    <NavLink to={"/lists"}>
+                    <NavLink to={"/lists"} activeClassName="selected">
                         <span>{lists} Lists</span>
                     </NavLink>
-                    <NavLink to={"/profile"}>
+                    <NavLink to={"/profile"} activeClassName="selected">
                         <span>{profile} Profile</span>
                     </NavLink>
-                    <button className={"more"}>
+                    <button className={"more"} >
                         <span>{more}More</span>
                     </button>
 
