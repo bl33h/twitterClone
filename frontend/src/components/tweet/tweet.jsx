@@ -12,6 +12,11 @@ import {
 } from "../../assets/icons/icons";
 import './tweet.scss';
 
+function convertHashtagsToLinks(content) {
+    const hashtagRegex = /#(\w+)/g;
+    return content.replace(hashtagRegex, '<a href="/hashtag/$1">#$1</a>');
+}
+
 const Tweet = ({data}) => {
     const {
         id,
@@ -54,12 +59,10 @@ const Tweet = ({data}) => {
                         <button>{moreTweet}</button>
                     </div>
                 </div>
-                <div className={"tweet-content"}>
-                    {content}
-                </div>
+                <div className={"tweet-content"} dangerouslySetInnerHTML={{__html: convertHashtagsToLinks(content)}}/>
                 <div className={"interactions"}>
                     <div className={"replies"}>
-                        {replies} <span>{replies_amount}</span>
+                    {replies} <span>{replies_amount}</span>
                     </div>
                     <div className={"retweets"}>
                         {retweets} <span>{retweets_amount}</span>

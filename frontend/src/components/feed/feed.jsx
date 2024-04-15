@@ -15,7 +15,7 @@ function Feed () {
             "timestamp": "2022-01-01T00:00:00Z",
             "has_media": true,
             "has_poll": true,
-            "content": "This is a sample tweet",
+            "content": "This is a sample tweet #hashtag",
             "likes_amount": 10,
             "retweets_amount": 2,
             "replies_amount": 5
@@ -30,7 +30,7 @@ function Feed () {
             "timestamp": "2022-01-01T00:00:00Z",
             "has_media": true,
             "has_poll": true,
-            "content": "This is a sample tweet",
+            "content": "This is a sample tweet #ozuna",
             "likes_amount": 10,
             "retweets_amount": 2,
             "replies_amount": 5
