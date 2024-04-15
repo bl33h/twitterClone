@@ -3,16 +3,16 @@ import media from '../../assets/images/defaultMedia.png';
 import poll from '../../assets/images/defaultPoll.png';
 
 import {
+    analytics,
+    likes,
+    location as locationIcon,
     moreTweet,
     privateAccount,
-    verified,
     replies,
     retweets,
-    likes,
-    analytics,
     save,
     share,
-    location as locationIcon,
+    verified,
 } from "../../assets/icons/icons";
 import './tweet.scss';
 
@@ -65,19 +65,20 @@ const Tweet = ({data}) => {
                         {location && <span className={"dot"}>•</span>}
                         {location && <span className={"location-icon"}>{locationIcon}</span>}
                         {location && <span className={"location"}>{location}</span>}
-                </div>
-                <div className={"options"}>
+                    </div>
+                    <div className={"options"}>
                         <button>{moreTweet}</button>
                     </div>
                 </div>
-                <div className={"tweet-content"} dangerouslySetInnerHTML={{__html: convertHashtagsAndMentionsToLinks(content)}}/>
+                <div className={"tweet-content"}
+                     dangerouslySetInnerHTML={{__html: convertHashtagsAndMentionsToLinks(content)}}/>
                 <div className={"tweet-media"}>
                     {has_media && <img src={media} alt="media"/>}
                     {has_poll && <img src={poll} alt="poll"/>}
                 </div>
                 <div className={"interactions"}>
                     <div className={"replies"}>
-                    {replies} <span>{replies_amount}</span>
+                        {replies} <span>{replies_amount}</span>
                     </div>
                     <div className={"retweets"}>
                         {retweets} <span>{retweets_amount}</span>
