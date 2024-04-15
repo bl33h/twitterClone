@@ -62,12 +62,6 @@
 {
     tweets: [ //USANDO LAS RELACIONES: TWEETED, RETWEETED
         id: int
-        user: {
-            at: String (@)
-            name: String
-            is_profile_public: Boolean
-            is_blue: Boolean
-        }
         timestamp: Date
         has_media: Boolean
         has_poll: Boolean
@@ -82,7 +76,7 @@
 {
     tweets: [ //USANDO LAS RELACIONES: LIKED
         id: int
-        user: {
+        user_liked: {
             at: String (@)
             name: String
             is_profile_public: Boolean
@@ -102,12 +96,6 @@
 {
     tweets: [ //USANDO LAS RELACIONES: TWEETED con TWEETED.has_media = True
         id: int
-        user: {
-            at: String (@)
-            name: String
-            is_profile_public: Boolean
-            is_blue: Boolean
-        }
         timestamp: Date
         has_media: Boolean
         has_poll: Boolean
@@ -120,9 +108,9 @@
 
 //Ver perfil pestaña "Respuestas"
 {
-    tweets: [ //USANDO LAS RELACIONES: TWEETED, REPLIES_TO
+    tweets: [ //USANDO LAS RELACIONES: REPLIES_TO
         id: int
-        user: {
+        user_replied: {
             at: String (@)
             name: String
             is_profile_public: Boolean
