@@ -7,7 +7,7 @@
 }
 
 header {
-  svg{
+  svg {
     height: 1.9em;
     margin-top: 0.7em;
     margin-bottom: 0.7em;
@@ -36,7 +36,7 @@ nav > *, button.more {
   span {
     display: flex;
     align-items: center;
-    height: 2.4em;
+    height: 2.7em;
     width: fit-content;
     padding: 0 0.7em;
   }
@@ -52,4 +52,20 @@ button {
   background: none;
   border: none;
 
+  &.tweet {
+    display: block;
+    background: $accent-color;
+    color: $text-color;
+    width: 14em;
+    height: 3em;
+    border-radius: 1.5em;
+    font-size: 1em;
+    margin-top: 0.5em;
+    margin-left: 3.7em;
+    cursor: pointer;
+
+    &:hover {
+      background: darken($accent-color, 10%);
+    }
+  }
 }

@@ -35,7 +35,7 @@ const LeftPane = () => {
                     </button>
 
                 </nav>
-                <button className={"tweet-button"}>Tweet</button>
+                <button className={"tweet"}>Tweet</button>
                 <footer>
                     <button className={"account"}>
                         <div className={"photo"}>
