@@ -77,9 +77,27 @@ def generate_tweets_relationships(user_tags, tweet_ids, num_tweets):
 
     return tweeted, retweeted
 
+# --- LIKED relationship ---
+def generate_likes_data(user_tags, tweet_ids, num_likes):
+    devices = ['iPhone', 'Android', 'Web', 'iPad', 'Desktop']
+    operating_systems = ['iOS', 'Android', 'Windows', 'macOS', 'Linux']
+    likes_data = []
+
+    for _ in range(num_likes):
+        user_tag = random.choice(user_tags)
+        tweet_id = random.choice(tweet_ids)
+        timestamp = fake.date_this_decade().isoformat()
+        device = random.choice(devices)
+        os = random.choice(operating_systems)
+
+        likes_data.append([user_tag, tweet_id, timestamp, device, os])
+
+    return likes_data
+   
 # relationships count
 num_relationships = 12000
 num_tweets = 77000
+num_likes = 100000
 
 # headers and writing functions call
 follows_data = generate_following_data(user_tags, num_relationships)
@@ -94,8 +112,13 @@ retweeted_header = ['UserTag', 'TweetId', 'Content', 'HasMedia', 'HasPoll', 'Men
 write_csv_data('tweeted.csv', tweeted_header, tweeted)
 write_csv_data('retweeted.csv', retweeted_header, retweeted)
 
+likes_data = generate_likes_data(user_tags, tweet_ids, num_likes)
+likes_header = ['UserTag', 'TweetId', 'Timestamp', 'Device', 'OS']
+write_csv_data('liked.csv', likes_header, likes_data)
+
 # success message
 print(f"Generated and wrote {num_relationships} 'FOLLOWING' relationships to following.csv")
 print(f"Generated and wrote {num_relationships} 'LOCATED IN' relationships to locatedIn.csv")
 print(f"Generated 'TWEETED' relationships: {len(tweeted)}")
 print(f"Generated 'RETWEETED' relationships: {len(retweeted)}")
+print(f"Generated and wrote {num_likes} 'LIKED' relationships to locatedIn.csv")
