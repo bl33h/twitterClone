@@ -9,12 +9,42 @@ function Feed () {
             "user": {
                 "at": "@franz_cas",
                 "name": "Franz Castillo",
-                "is_profile_public": true,
-                "is_blue": false
+                "is_profile_public": false,
+                "is_blue": true
             },
             "timestamp": "2022-01-01T00:00:00Z",
-            "has_media": false,
-            "has_poll": false,
+            "has_media": true,
+            "has_poll": true,
+            "content": "This is a sample tweet",
+            "likes_amount": 10,
+            "retweets_amount": 2,
+            "replies_amount": 5
+        },{
+            "id": 1,
+            "user": {
+                "at": "@franz_cas",
+                "name": "Franz Castillo",
+                "is_profile_public": false,
+                "is_blue": true
+            },
+            "timestamp": "2022-01-01T00:00:00Z",
+            "has_media": true,
+            "has_poll": true,
+            "content": "This is a sample tweet",
+            "likes_amount": 10,
+            "retweets_amount": 2,
+            "replies_amount": 5
+        },{
+            "id": 1,
+            "user": {
+                "at": "@franz_cas",
+                "name": "Franz Castillo",
+                "is_profile_public": false,
+                "is_blue": true
+            },
+            "timestamp": "2022-01-01T00:00:00Z",
+            "has_media": true,
+            "has_poll": true,
             "content": "This is a sample tweet",
             "likes_amount": 10,
             "retweets_amount": 2,
