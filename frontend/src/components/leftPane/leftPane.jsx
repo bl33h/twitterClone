@@ -7,13 +7,31 @@ const LeftPane = () => {
             <div className={"container"}>
                 <header>*icon*</header>
                 <nav>
-                    <NavLink to={"/"}>Home</NavLink>
-                    <NavLink to={"/explore"}>Explore</NavLink>
-                    <NavLink to={"/notifications"}>Notifications</NavLink>
-                    <NavLink to={"/messages"}>Messages</NavLink>
-                    <NavLink to={"/bookmarks"}>Bookmarks</NavLink>
-                    <NavLink to={"/lists"}>Lists</NavLink>
-                    <NavLink to={"/profile"}>Profile</NavLink>
+                    <NavLink to={"/"}>
+                        <span>Home</span>
+                    </NavLink>
+                    <NavLink to={"/explore"}>
+                        <span>Explore</span>
+                    </NavLink>
+                    <NavLink to={"/notifications"}>
+                        <span>Notifications</span>
+                    </NavLink>
+                    <NavLink to={"/messages"}>
+                        <span>Messages</span>
+                    </NavLink>
+                    <NavLink to={"/bookmarks"}>
+                        <span>Bookmarks</span>
+                    </NavLink>
+                    <NavLink to={"/lists"}>
+                        <span>Lists</span>
+                    </NavLink>
+                    <NavLink to={"/profile"}>
+                        <span>Profile</span>
+                    </NavLink>
+                    <button className={"more"}>
+                        <span>More</span>
+                    </button>
+
                 </nav>
                 <button className={"tweet-button"}>Tweet</button>
                 <footer>
