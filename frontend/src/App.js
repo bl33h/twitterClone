@@ -3,6 +3,7 @@ import './App.scss';
 
 import {BrowserRouter, Route, Routes} from 'react-router-dom';
 import LeftPane from "./components/leftPane/leftPane";
+import Feed from "./components/feed/feed";
 
 function App() {
     return (
@@ -10,7 +11,7 @@ function App() {
             <div className={"app"}>
                 <LeftPane/>
                 <Routes>
-                    <Route path={"/"} element={"Home"}/>
+                    <Route path={"/"} element={<Feed/>}/>
                     <Route path={"/explore"} element={"Explore"}/>
                     <Route path={"/notifications"} element={"Notifications"}/>
                     <Route path={"/messages"} element={"Messages"}/>
