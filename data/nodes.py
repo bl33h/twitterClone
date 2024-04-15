@@ -8,6 +8,7 @@ fake = Faker()
 unique_tags = set()
 unique_chat_ids = set()
 unique_tweet_ids = set()
+unique_message_ids = set()
 unique_location_ids = set()
 
 # --- CREATE USER ---
@@ -90,6 +91,35 @@ def create_chat_data():
             "Is_dm": is_dm
         }
 
+# --- CREATE MESSAGE ---
+def create_message_data(user_tags):
+        message_id = fake.unique.pystr(min_chars=0, max_chars=10)
+        
+        while message_id in unique_message_ids:
+            message_id = fake.unique.pystr(min_chars=0, max_chars=10)
+            
+        content = fake.text(max_nb_chars=280)
+        reactions = random.sample(reactions_list, k=random.randint(1, len(reactions_list)))  # Random subset of reactions
+        mentions = random.sample(user_tags, k=random.randint(0, min(5, len(user_tags))))  # Random subset of user tags, up to 5
+        return {
+            "Id": message_id,
+            "Content": content,
+            "Reactions": ','.join(reactions),
+            "Mentions": ','.join(mentions)
+        }
+
+# read user tags from users.csv for mentions in messages
+def read_user_tags(filename):
+    tags = []
+    with open(filename, 'r', encoding='utf-8') as file:
+        reader = csv.DictReader(file)
+        for row in reader:
+            tags.append(row['Tag'])
+    return tags
+
+# reactions list
+reactions_list = ['😀', '😂', '😍', '😢', '😠', '👍', '👎', '❤️', '🔥', '🤔']
+
 # write USER data to a CSV file
 def write_users_to_csv(csv_file_name, node_count):
     with open(csv_file_name, mode='w', newline='', encoding='utf-8') as file:
@@ -130,12 +160,25 @@ def write_chats_to_csv(csv_file_name, node_count):
             unique_chat_ids.add(chat_data['Id'])
             writer.writerow(chat_data)
 
+# write MESSAGES data to a CSV file
+def write_messages_to_csv(csv_file_name, node_count, user_tags):
+    with open(csv_file_name, mode='w', newline='', encoding='utf-8') as file:
+        writer = csv.DictWriter(file, fieldnames=["Id", "Content", "Reactions", "Mentions"])
+        writer.writeheader()
+        for _ in range(node_count):
+            message_data = create_message_data(user_tags)
+            unique_message_ids.add(message_data['Id'])
+            writer.writerow(message_data)
+
 # define the number of nodes
 node_count = 5000
 
 write_users_to_csv('user.csv', node_count)
+user_tags = read_user_tags('user.csv')
+
 write_locations_to_csv('location.csv', node_count)
 write_tweets_to_csv('tweet.csv', node_count)
 write_chats_to_csv('chat.csv', node_count)
+write_messages_to_csv('message.csv', node_count, user_tags)
 
-print("User, location, and tweet data generation complete.")
+print("Nodes data generation complete.")
