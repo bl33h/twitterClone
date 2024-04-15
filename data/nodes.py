@@ -1,10 +1,12 @@
 from faker import Faker
+import random
 import csv
 
 fake = Faker()
 
-# Unique sets to ensure no duplicates
+# unique sets to ensure no duplicates
 unique_tags = set()
+unique_tweet_ids = set()
 unique_location_ids = set()
 
 # --- CREATE USER ---
@@ -41,7 +43,32 @@ def create_location_data():
         "Country": country
     }
 
-# Write USER data to a CSV file
+# --- CREATE TWEET ---
+def create_tweet_data():
+    tweet_id = fake.unique.pystr(min_chars=0, max_chars=10)
+    while tweet_id in unique_tweet_ids:
+        tweet_id = fake.unique.pystr(min_chars=0, max_chars=10)
+    content = fake.text(max_nb_chars=280)
+    impressions = random.randint(0, 100000)
+    engagements = random.randint(0, impressions)
+    detail_expands = random.randint(0, engagements)
+    new_followers = random.randint(0, 1000)
+    profile_visits = random.randint(0, 1000)
+    money_generated = round(random.uniform(0, 100), 2)
+    hashtags = [fake.word() for _ in range(random.randint(0, 7))]
+    return {
+        "Id": tweet_id,
+        "Content": content,
+        "Impressions": impressions,
+        "Engagements": engagements,
+        "Detail_expands": detail_expands,
+        "New_followers": new_followers,
+        "Profile_visits": profile_visits,
+        "Money_generated": money_generated,
+        "Hashtags": ",".join(hashtags)
+    }
+
+# write USER data to a CSV file
 def write_users_to_csv(csv_file_name, node_count):
     with open(csv_file_name, mode='w', newline='', encoding='utf-8') as file:
         writer = csv.DictWriter(file, fieldnames=["Tag", "Username", "Description", "Birthday", "Joined_on", "Is_profile_public"])
@@ -51,7 +78,7 @@ def write_users_to_csv(csv_file_name, node_count):
             unique_tags.add(user_data['Tag'])
             writer.writerow(user_data)
 
-# Write LOCATION data to a CSV file
+# write LOCATION data to a CSV file
 def write_locations_to_csv(csv_file_name, node_count):
     with open(csv_file_name, mode='w', newline='', encoding='utf-8') as file:
         writer = csv.DictWriter(file, fieldnames=["Id", "Name", "City", "Country"])
@@ -60,14 +87,22 @@ def write_locations_to_csv(csv_file_name, node_count):
             location_data = create_location_data()
             unique_location_ids.add(location_data['Id'])
             writer.writerow(location_data)
+            
+# write TWEET data to a CSV file
+def write_tweets_to_csv(csv_file_name, node_count):
+    with open(csv_file_name, mode='w', newline='', encoding='utf-8') as file:
+        writer = csv.DictWriter(file, fieldnames=["Id", "Content", "Impressions", "Engagements", "Detail_expands", "New_followers", "Profile_visits", "Money_generated", "Hashtags"])
+        writer.writeheader()
+        for _ in range(node_count):
+            tweet_data = create_tweet_data()
+            unique_tweet_ids.add(tweet_data['Id'])
+            writer.writerow(tweet_data)
 
-# Define the number of nodes
+# define the number of nodes
 node_count = 5000
 
-# Generate and write USER data
 write_users_to_csv('users.csv', node_count)
-
-# Generate and write LOCATION data
 write_locations_to_csv('locations.csv', node_count)
+write_tweets_to_csv('tweets.csv', node_count)
 
-print("User and location data generation complete.")
+print("User, location, and tweet data generation complete.")
