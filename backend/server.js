@@ -119,25 +119,7 @@ app.get('/', async (req, res) => {
     }
   }); 
 
-  app.post('/new_account', async (req, res) => {
-    const session = driver.session();
-    try {
-        const { tag, username, description, birthdate, joined_on, is_profile_public } = req.body;
 
-        const result = await session.run(
-            'CREATE (u:User {tag: $tag, username: $username, description: $description, birthdate: $birthdate, joined_on: $joined_on, is_profile_public: $is_profile_public}) RETURN u',
-            { tag, username, description, birthdate, joined_on, is_profile_public }
-        );
-
-        const newUser = result.records[0].get('u').properties;
-        res.status(201).json(newUser); 
-    } catch (error) {
-        console.error('Error creating user in Neo4j', error);
-        res.status(500).json({ error: 'Error creating user in Neo4j' });
-    } finally {
-        session.close();
-    }
-});
 
 
 app.listen(port, () => {
