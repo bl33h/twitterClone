@@ -58,12 +58,12 @@ def write_relationships_to_csv(csv_file_name, relationships_data, headers):
 # Number of relationships to generate
 num_relationships = 70000
 
-# write FOLLOWING relationships
+# write FOLLOWING relationship
 user_tags = read_user_tags('user.csv')
 follows_data = generate_follows_data(user_tags, num_relationships)
 write_relationships_to_csv('following.csv', follows_data, ['FollowerTag', 'FollowedTag', 'Timestamp', 'IsMuted', 'NotificationsActive'])
 
-# Generate and write LOCATED IN relationships
+# Generate and write LOCATED IN relationship
 location_ids = read_location_ids('location.csv')
 located_in_data = generate_located_in_data(user_tags, location_ids, num_relationships)
 write_relationships_to_csv('locatedIn.csv', located_in_data, ['UserTag', 'LocationId', 'Timestamp', 'CurrentlyIn', 'LivesThere'])
