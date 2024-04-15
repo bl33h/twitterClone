@@ -19,9 +19,11 @@ def write_csv_data(filename, header, data):
         csv_writer.writerows(data)
 
 # specific columns
-tweet_content = read_csv_data('tweet.csv', 'Content')
+user_creation_dates = read_csv_data('user.csv', 'Joined_on')
 tweet_time = read_csv_data('tweeted.csv', 'TimeStamp')
+tweet_content = read_csv_data('tweet.csv', 'Content')
 location_ids = read_csv_data('location.csv', 'Id')
+messages_id = read_csv_data('message.csv', 'Id')
 user_tags = read_csv_data('user.csv', 'Tag')
 tweet_ids = read_csv_data('tweet.csv', 'Id')
 
@@ -115,8 +117,26 @@ def generate_replies_data(user_tags, tweet_ids, num_replies):
         replies_data.append([user_tag, tweet_id, reply_to_tweet_id, timestamp.isoformat()])
     return replies_data
 
+# --- SENT MESSAGE relationship ---
+def generate_sent_messages(user_tags, message_id, num_likes):
+    devices = ['iPhone', 'Android', 'Web', 'iPad', 'Desktop']
+    operating_systems = ['iOS', 'Android', 'Windows', 'macOS', 'Linux']
+    sent_messages_data = []
+
+    for _ in range(num_likes):
+        user_tag = random.choice(user_tags)
+        message_id = random.choice(messages_id)
+        timestamp = fake.date_this_decade().isoformat()
+        device = random.choice(devices)
+        os = random.choice(operating_systems)
+
+        sent_messages_data.append([user_tag, message_id, timestamp, device, os])
+
+    return sent_messages_data
+
 # relationships count
 num_relationships = 12000
+num_messages = 2000
 num_tweets = 77000
 num_likes = 100000
 num_replies = 20000
@@ -142,6 +162,10 @@ replies_data = generate_replies_data(user_tags, tweet_ids, num_replies)
 replies_header = ['UserTag', 'TweetId', 'ReplyToTweetId', 'Timestamp']
 write_csv_data('replies.csv', replies_header, replies_data)
 
+sent_data = generate_sent_messages(user_tags, messages_id, num_messages)
+sent_header = ['UserTag', 'MessageId', 'Timestamp', 'Device', 'OS']
+write_csv_data('sent.csv', sent_header, sent_data)
+
 # success message
 print(f"Generated and wrote {num_relationships} 'FOLLOWING' relationships to following.csv")
 print(f"Generated and wrote {num_relationships} 'LOCATED IN' relationships to locatedIn.csv")
@@ -149,3 +173,4 @@ print(f"Generated 'TWEETED' relationships: {len(tweeted)}")
 print(f"Generated 'RETWEETED' relationships: {len(retweeted)}")
 print(f"Generated and wrote {num_likes} 'LIKED' relationships to liked.csv")
 print(f"Generated and wrote {num_replies} 'REPLIES TO' relationships to replies.csv")
+print(f"Generated and wrote {num_likes} 'SENT' relationships to sent.csv")
