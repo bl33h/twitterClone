@@ -121,4 +121,4 @@ print(f"Generated and wrote {num_relationships} 'FOLLOWING' relationships to fol
 print(f"Generated and wrote {num_relationships} 'LOCATED IN' relationships to locatedIn.csv")
 print(f"Generated 'TWEETED' relationships: {len(tweeted)}")
 print(f"Generated 'RETWEETED' relationships: {len(retweeted)}")
-print(f"Generated and wrote {num_likes} 'LIKED' relationships to locatedIn.csv")
+print(f"Generated and wrote {num_likes} 'LIKED' relationships to liked.csv")
