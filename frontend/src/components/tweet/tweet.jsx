@@ -62,9 +62,6 @@ const Tweet = ({data}) => {
                         <span className={"time"}>
                             {Math.floor((new Date() - new Date(timestamp)) / 1000 / 60 / 60)}h
                         </span>
-                        {location && <span className={"dot"}>•</span>}
-                        {location && <span className={"location-icon"}>{locationIcon}</span>}
-                        {location && <span className={"location"}>{location}</span>}
                     </div>
                     <div className={"options"}>
                         <button>{moreTweet}</button>

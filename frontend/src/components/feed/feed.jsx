@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState} from 'react';
 
+import Publisher from "./publisher";
 import Tweet from '../tweet/tweet';
 
-function Feed () {
+function Feed() {
     const [tweets, setTweets] = useState([
         {
             "id": 1,
@@ -20,7 +21,7 @@ function Feed () {
             "retweets_amount": 2,
             "replies_amount": 5,
             "location": "Manila, Philippines",
-        },{
+        }, {
             "id": 1,
             "user": {
                 "at": "@franz_cas",
@@ -46,10 +47,16 @@ function Feed () {
     // }, []);
 
     return (
-        <div>
-            {tweets.map((tweet, index) => (
-                <Tweet key={index} data={tweet}/>
-            ))}
+        /*
+        TODO: Implement the publisher component and style it
+         */
+        <div className={"feed"}>
+            <Publisher/>
+            <div className={"tweets"}>
+                {tweets.map((tweet, index) => (
+                    <Tweet key={index} data={tweet}/>
+                ))}
+            </div>
         </div>
     );
 }
