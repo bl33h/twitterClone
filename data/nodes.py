@@ -6,14 +6,17 @@ fake = Faker()
 
 # unique sets to ensure no duplicates
 unique_tags = set()
+unique_chat_ids = set()
 unique_tweet_ids = set()
 unique_location_ids = set()
 
 # --- CREATE USER ---
 def create_user_data():
     tag = fake.unique.user_name()
+    
     while tag in unique_tags:
         tag = fake.unique.user_name()
+        
     username = fake.user_name()
     description = fake.text(max_nb_chars=30)
     birthday = fake.date_of_birth(minimum_age=18, maximum_age=85).isoformat()
@@ -31,8 +34,10 @@ def create_user_data():
 # --- CREATE LOCATION ---
 def create_location_data():
     location_id = fake.unique.pystr(min_chars=0, max_chars=10)
+    
     while location_id in unique_location_ids:
         location_id = fake.unique.pystr(min_chars=0, max_chars=10)
+        
     name = fake.city()
     city = fake.city()
     country = fake.country()
@@ -46,8 +51,10 @@ def create_location_data():
 # --- CREATE TWEET ---
 def create_tweet_data():
     tweet_id = fake.unique.pystr(min_chars=0, max_chars=10)
+    
     while tweet_id in unique_tweet_ids:
         tweet_id = fake.unique.pystr(min_chars=0, max_chars=10)
+        
     content = fake.text(max_nb_chars=280)
     impressions = random.randint(0, 100000)
     engagements = random.randint(0, impressions)
@@ -67,6 +74,21 @@ def create_tweet_data():
         "Money_generated": money_generated,
         "Hashtags": ",".join(hashtags)
     }
+
+# --- CREATE CHAT ---
+def create_chat_data():
+        chat_id = fake.unique.pystr(min_chars=0, max_chars=10)
+        
+        while chat_id in unique_chat_ids:
+            chat_id = fake.unique.pystr(min_chars=0, max_chars=10)
+            
+        name = fake.company()
+        is_dm = fake.boolean()
+        return {
+            "Id": chat_id,
+            "Name": name,
+            "Is_dm": is_dm
+        }
 
 # write USER data to a CSV file
 def write_users_to_csv(csv_file_name, node_count):
@@ -98,11 +120,22 @@ def write_tweets_to_csv(csv_file_name, node_count):
             unique_tweet_ids.add(tweet_data['Id'])
             writer.writerow(tweet_data)
 
+# write CHAT data to a CSV file
+def write_chats_to_csv(csv_file_name, node_count):
+    with open(csv_file_name, mode='w', newline='', encoding='utf-8') as file:
+        writer = csv.DictWriter(file, fieldnames=["Id", "Name", "Is_dm"])
+        writer.writeheader()
+        for _ in range(node_count):
+            chat_data = create_chat_data()
+            unique_chat_ids.add(chat_data['Id'])
+            writer.writerow(chat_data)
+
 # define the number of nodes
 node_count = 5000
 
-write_users_to_csv('users.csv', node_count)
-write_locations_to_csv('locations.csv', node_count)
-write_tweets_to_csv('tweets.csv', node_count)
+write_users_to_csv('user.csv', node_count)
+write_locations_to_csv('location.csv', node_count)
+write_tweets_to_csv('tweet.csv', node_count)
+write_chats_to_csv('chat.csv', node_count)
 
 print("User, location, and tweet data generation complete.")
