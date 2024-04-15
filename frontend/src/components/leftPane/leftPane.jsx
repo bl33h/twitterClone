@@ -1,5 +1,5 @@
 import {NavLink} from "react-router-dom";
-import { twitter, home, explore, notifications, messages, lists, bookmarks, profile, more } from "./icons";
+import { twitter, home, explore, notifications, messages, lists, bookmarks, profile, more } from "../../assets/icons/icons";
 
 import './leftPane.scss'
 
