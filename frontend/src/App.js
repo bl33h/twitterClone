@@ -1,34 +1,27 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import './App.scss';
+
+import {BrowserRouter, Route, Routes} from 'react-router-dom';
+import LeftPane from "./components/leftPane/leftPane";
 
 function App() {
-  const [people, setPeople] = useState([]);
-
-  useEffect(() => {
-    fetch('http://localhost:3001/')
-      .then(response => response.json())
-      .then(data => {
-        console.log(data);
-        setPeople(data);
-      })
-      .catch(error => console.error('Error fetching data:', error));
-  }, []);
-
-  return (
-    <div>
-      <h1>Node Data</h1>
-      {people.length > 0 ? (
-        <ul>
-          {people.map((person, index) => (
-            <li key={index}>
-              {person.properties.name}, Age: {person.properties.age}
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>No data found</p>
-      )}
-    </div>
-  );
+    return (
+        <BrowserRouter>
+            <div className={"app"}>
+                <LeftPane/>
+                <Routes>
+                    <Route path={"/"} element={"Home"}/>
+                    <Route path={"/explore"} element={"Explore"}/>
+                    <Route path={"/notifications"} element={"Notifications"}/>
+                    <Route path={"/messages"} element={"Messages"}/>
+                    <Route path={"/bookmarks"} element={"Bookmarks"}/>
+                    <Route path={"/lists"} element={"Lists"}/>
+                    <Route path={"/profile"} element={"Profile"}/>
+                </Routes>
+                <div className={"right-pane"}>Right Pane</div>
+            </div>
+        </BrowserRouter>
+    )
 }
 
 export default App;

@@ -1,0 +1,22 @@
+$background-color: #15202b;
+$text-color: #f7f9f9;
+$accent-color: #1da1f2;
+$like-color: #e0245e;
+* {
+  margin: 0;
+  padding: 0;
+}
+
+.app {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  display: grid;
+  grid-template-columns: 1.1fr 2.1fr 1.4fr;
+  background: #000000;
+  color: #f7f9f9;
+}
+
+.right-pane {
+  background: $background-color;
+  color: $text-color;
+  min-height: 100vh;
+}
