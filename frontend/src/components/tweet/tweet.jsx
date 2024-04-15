@@ -1,5 +1,15 @@
 import pfp from '../../assets/images/defaultPFP.jpg';
-import {moreTweet, privateAccount, verified} from "../../assets/icons/icons";
+import {
+    moreTweet,
+    privateAccount,
+    verified,
+    replies,
+    retweets,
+    likes,
+    analytics,
+    save,
+    share,
+} from "../../assets/icons/icons";
 import './tweet.scss';
 
 const Tweet = ({data}) => {
@@ -21,7 +31,7 @@ const Tweet = ({data}) => {
     } = data;
 
     return (
-        <div className="tweet" id={id}>
+        <div className="tweet">
             <div className={"photo"}>
                 <img
                     alt={name}
@@ -45,8 +55,25 @@ const Tweet = ({data}) => {
                     </div>
                 </div>
                 <div className={"tweet-content"}>
+                    {content}
                 </div>
                 <div className={"interactions"}>
+                    <div className={"replies"}>
+                        {replies} <span>{replies_amount}</span>
+                    </div>
+                    <div className={"retweets"}>
+                        {retweets} <span>{retweets_amount}</span>
+                    </div>
+                    <div className={"likes"}>
+                        {likes} <span>{likes_amount}</span>
+                    </div>
+                    <div className={"analytics"}>
+                        {analytics}
+                    </div>
+                    <div className={"options"}>
+                        <button>{save}</button>
+                        <button>{share}</button>
+                    </div>
                 </div>
             </div>
         </div>

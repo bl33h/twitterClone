@@ -9,7 +9,7 @@
 .tweet {
   display: flex;
   flex-direction: row;
-  padding: 10px;
+  padding: 10px 10px 0;
   border: 1px solid $border-color;
   background: $background-color;
 
@@ -34,6 +34,7 @@
     margin-left: 0.5em;
     width: 100%;
 
+
     .tweet-header {
       display: flex;
       justify-content: space-between;
@@ -41,7 +42,6 @@
       .names {
         display: flex;
         flex-direction: row;
-        margin-left: 0.5em;
 
         .tweet-name {
           font-weight: bold;
@@ -88,6 +88,65 @@
             width: 1em;
             height: 1em;
           }
+        }
+      }
+    }
+
+    .interactions {
+      display: flex;
+      justify-content: space-between;
+      flex-direction: row;
+      margin-top: 0.5em;
+      cursor: pointer;
+
+      .replies, .retweets, .likes, .analytics, .options {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        color: darken($text-color, 20%);
+        font-size: 0.9em;
+        margin-right: 1em;
+      }
+
+      .options {
+        padding-top: 0.5em;
+      }
+
+      .retweets svg:hover {
+        fill: $retweet-color;
+        background-color: transparentize($retweet-color, 0.9);
+      }
+      .likes svg:hover {
+        fill: $like-color;
+        background-color: transparentize($like-color, 0.9);
+      }
+
+      svg {
+        width: 1.2em;
+        height: 1.2em;
+        margin-right: 0.5em;
+        fill: darken($text-color, 20%);
+        transition: fill 0.2s;
+        border-radius: 100%;
+
+        &:hover {
+          fill: $accent-color;
+          background-color: transparentize($accent-color, 0.9);
+        }
+      }
+
+
+      .options {
+        display: flex;
+        flex-direction: row;
+        margin-left: 0.5em;
+
+        button {
+          background: none;
+          border: none;
+          padding: 0.5em;
+          cursor: pointer;
+
         }
       }
     }

@@ -45,7 +45,7 @@ function Feed () {
             "timestamp": "2022-01-01T00:00:00Z",
             "has_media": true,
             "has_poll": true,
-            "content": "This is a sample tweet",
+            "content": "This is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweet",
             "likes_amount": 10,
             "retweets_amount": 2,
             "replies_amount": 5
