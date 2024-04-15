@@ -1,35 +1,37 @@
 import {NavLink} from "react-router-dom";
+import { twitter, home, explore, notifications, messages, lists, bookmarks, profile, more } from "./icons";
+
 import './leftPane.scss'
 
 const LeftPane = () => {
     return (
         <div className="left-pane">
             <div className={"container"}>
-                <header>*icon*</header>
+                <header>{twitter}</header>
                 <nav>
                     <NavLink to={"/"}>
-                        <span>Home</span>
+                        <span>{home} Home</span>
                     </NavLink>
                     <NavLink to={"/explore"}>
-                        <span>Explore</span>
+                        <span>{explore} Explore</span>
                     </NavLink>
                     <NavLink to={"/notifications"}>
-                        <span>Notifications</span>
+                        <span>{notifications} Notifications</span>
                     </NavLink>
                     <NavLink to={"/messages"}>
-                        <span>Messages</span>
+                        <span>{messages} Messages</span>
                     </NavLink>
                     <NavLink to={"/bookmarks"}>
-                        <span>Bookmarks</span>
+                        <span>{bookmarks} Bookmarks</span>
                     </NavLink>
                     <NavLink to={"/lists"}>
-                        <span>Lists</span>
+                        <span>{lists} Lists</span>
                     </NavLink>
                     <NavLink to={"/profile"}>
-                        <span>Profile</span>
+                        <span>{profile} Profile</span>
                     </NavLink>
                     <button className={"more"}>
-                        <span>More</span>
+                        <span>{more}More</span>
                     </button>
 
                 </nav>

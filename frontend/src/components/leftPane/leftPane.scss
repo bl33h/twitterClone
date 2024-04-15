@@ -6,10 +6,23 @@
   min-height: 100vh;
 }
 
-nav {
-  padding-left: 3.3em;
+header {
+  svg{
+    height: 1.9em;
+    margin-top: 0.7em;
+    margin-bottom: 0.7em;
+    margin-left: 2em;
+  }
 }
 
+nav {
+  padding-left: 3.3em;
+
+  svg {
+    height: 1.3em;
+    margin-right: 0.9em;
+  }
+}
 
 nav > *, button.more {
   display: block;
