@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from faker import Faker
 import random
 import csv
@@ -18,8 +19,9 @@ def write_csv_data(filename, header, data):
         csv_writer.writerows(data)
 
 # specific columns
-location_ids = read_csv_data('location.csv', 'Id')
 tweet_content = read_csv_data('tweet.csv', 'Content')
+tweet_time = read_csv_data('tweeted.csv', 'TimeStamp')
+location_ids = read_csv_data('location.csv', 'Id')
 user_tags = read_csv_data('user.csv', 'Tag')
 tweet_ids = read_csv_data('tweet.csv', 'Id')
 
@@ -93,11 +95,31 @@ def generate_likes_data(user_tags, tweet_ids, num_likes):
         likes_data.append([user_tag, tweet_id, timestamp, device, os])
 
     return likes_data
-   
+
+# --- REPLYING relationship ---
+def generate_replies_data(user_tags, tweet_ids, num_replies):
+    replies_data = []
+    # read tweet times as datetime objects for comparison
+    tweet_times = {tweet_id: datetime.fromisoformat(time) for tweet_id, time in zip(tweet_ids, tweet_time)}
+    
+    for _ in range(num_replies):
+        user_tag = random.choice(user_tags)
+        tweet_id = random.choice(tweet_ids)
+        reply_to_tweet_id = random.choice(tweet_ids)
+        timestamp = datetime.fromisoformat(fake.date_this_decade().isoformat())
+
+        # ensure reply is always after the tweet time
+        if timestamp <= tweet_times[tweet_id]:
+            timestamp = tweet_times[tweet_id] + timedelta(minutes=1)
+
+        replies_data.append([user_tag, tweet_id, reply_to_tweet_id, timestamp.isoformat()])
+    return replies_data
+
 # relationships count
 num_relationships = 12000
 num_tweets = 77000
 num_likes = 100000
+num_replies = 20000
 
 # headers and writing functions call
 follows_data = generate_following_data(user_tags, num_relationships)
@@ -116,9 +138,14 @@ likes_data = generate_likes_data(user_tags, tweet_ids, num_likes)
 likes_header = ['UserTag', 'TweetId', 'Timestamp', 'Device', 'OS']
 write_csv_data('liked.csv', likes_header, likes_data)
 
+replies_data = generate_replies_data(user_tags, tweet_ids, num_replies)
+replies_header = ['UserTag', 'TweetId', 'ReplyToTweetId', 'Timestamp']
+write_csv_data('replies.csv', replies_header, replies_data)
+
 # success message
 print(f"Generated and wrote {num_relationships} 'FOLLOWING' relationships to following.csv")
 print(f"Generated and wrote {num_relationships} 'LOCATED IN' relationships to locatedIn.csv")
 print(f"Generated 'TWEETED' relationships: {len(tweeted)}")
 print(f"Generated 'RETWEETED' relationships: {len(retweeted)}")
 print(f"Generated and wrote {num_likes} 'LIKED' relationships to liked.csv")
+print(f"Generated and wrote {num_replies} 'REPLIES TO' relationships to replies.csv")
