@@ -39,6 +39,55 @@ app.get('/', async (req, res) => {
       res.status(500).send('Error accessing Neo4j');
     }
   });  
+
+  app.get('/feed/:tag', async (req, res) => {
+    const tag = req.params.tag;
+    try {
+      const result = await session.run(
+      `
+      MATCH (u:User {tag: $tag})
+      OPTIONAL MATCH (u)-[:FOLLOWS]->(following:User)
+      OPTIONAL MATCH (following)-[rel:TWEETED]->(tweet:Tweet)
+      OPTIONAL MATCH (:User)-[likes:LIKED]->(tweet)
+      OPTIONAL MATCH (:User)-[rts:RETWEETED]->(tweet)
+      OPTIONAL MATCH (:Tweet)-[ans:REPLIES_TO]->(tweet)
+      RETURN tweet.id AS id,
+      following AS user,
+      rel.timestamp AS timestamp,
+      rel.has_media AS has_media,
+      rel.has_poll AS has_poll,
+      tweet.content AS content,
+      COUNT(DISTINCT ans) AS replies_amount,
+      COUNT(DISTINCT likes) AS likes_amount,
+      COUNT(DISTINCT rts) AS retweets_amount
+      `
+      , { tag: tag });
+      const nodes = result.records.map(record => {
+        return {
+          id: record.get('id').toNumber(),
+          user: {
+            tag: record.get('user').properties.tag,
+            username: record.get('user').properties.username,
+            is_profile_public: record.get('user').properties.is_profile_public,
+            is_blue: record.get('user').properties.is_blue
+          },
+          timestamp: record.get('timestamp'),
+          has_media: record.get('has_media'),
+          has_poll: record.get('has_poll'),
+          content: record.get('content'),
+          replies_amount: record.get('replies_amount').toNumber(),
+          likes_amount: record.get('likes_amount').toNumber(),
+          retweets_amount: record.get('retweets_amount').toNumber()
+        };
+      
+      });
+      console.log("Formatted nodes sent to frontend:", nodes);
+      res.send(nodes);
+    } catch (error) {
+      console.error('Error accessing Neo4j', error);
+      res.status(500).send('Error accessing Neo4j');
+    }
+  });  
   
   app.get('/profile/:tag', async (req, res) => {
     const tag = req.params.tag;
@@ -118,6 +167,7 @@ app.get('/', async (req, res) => {
       res.status(500).send('Error interno del servidor');
     }
   }); 
+
 
 
 
