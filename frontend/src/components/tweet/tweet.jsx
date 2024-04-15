@@ -12,6 +12,7 @@ import {
     analytics,
     save,
     share,
+    location as locationIcon,
 } from "../../assets/icons/icons";
 import './tweet.scss';
 
@@ -38,7 +39,8 @@ const Tweet = ({data}) => {
         content,
         likes_amount,
         retweets_amount,
-        replies_amount
+        replies_amount,
+        location,
     } = data;
 
     return (
@@ -58,10 +60,13 @@ const Tweet = ({data}) => {
                         <span className={"tweet-username"}>{data.user.at}</span>
                         <span className={"dot"}>•</span>
                         <span className={"time"}>
-                            {Math.floor((new Date() - new Date(data.timestamp)) / 1000 / 60 / 60)}h
+                            {Math.floor((new Date() - new Date(timestamp)) / 1000 / 60 / 60)}h
                         </span>
-                    </div>
-                    <div className={"options"}>
+                        {location && <span className={"dot"}>•</span>}
+                        {location && <span className={"location-icon"}>{locationIcon}</span>}
+                        {location && <span className={"location"}>{location}</span>}
+                </div>
+                <div className={"options"}>
                         <button>{moreTweet}</button>
                     </div>
                 </div>

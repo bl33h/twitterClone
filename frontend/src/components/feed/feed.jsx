@@ -18,22 +18,8 @@ function Feed () {
             "content": "This is a sample tweet #hashtag |  @franz_cas",
             "likes_amount": 10,
             "retweets_amount": 2,
-            "replies_amount": 5
-        },{
-            "id": 1,
-            "user": {
-                "at": "@franz_cas",
-                "name": "Franz Castillo",
-                "is_profile_public": false,
-                "is_blue": true
-            },
-            "timestamp": "2022-01-01T00:00:00Z",
-            "has_media": true,
-            "has_poll": false,
-            "content": "This is a sample tweet #ozuna",
-            "likes_amount": 10,
-            "retweets_amount": 2,
-            "replies_amount": 5
+            "replies_amount": 5,
+            "location": "Manila, Philippines",
         },{
             "id": 1,
             "user": {
@@ -44,146 +30,11 @@ function Feed () {
             },
             "timestamp": "2022-01-01T00:00:00Z",
             "has_media": false,
-            "has_poll": false,
-            "content": "This is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweet",
-            "likes_amount": 10,
-            "retweets_amount": 2,
-            "replies_amount": 5
-        },{
-            "id": 1,
-            "user": {
-                "at": "@franz_cas",
-                "name": "Franz Castillo",
-                "is_profile_public": false,
-                "is_blue": true
-            },
-            "timestamp": "2022-01-01T00:00:00Z",
-            "has_media": true,
             "has_poll": true,
-            "content": "This is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweet",
+            "content": "This is a sample tweet #hashtag |  @.franz_cas",
             "likes_amount": 10,
             "retweets_amount": 2,
-            "replies_amount": 5
-        },{
-            "id": 1,
-            "user": {
-                "at": "@franz_cas",
-                "name": "Franz Castillo",
-                "is_profile_public": false,
-                "is_blue": true
-            },
-            "timestamp": "2022-01-01T00:00:00Z",
-            "has_media": true,
-            "has_poll": true,
-            "content": "This is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweet",
-            "likes_amount": 10,
-            "retweets_amount": 2,
-            "replies_amount": 5
-        },{
-            "id": 1,
-            "user": {
-                "at": "@franz_cas",
-                "name": "Franz Castillo",
-                "is_profile_public": false,
-                "is_blue": true
-            },
-            "timestamp": "2022-01-01T00:00:00Z",
-            "has_media": true,
-            "has_poll": true,
-            "content": "This is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweet",
-            "likes_amount": 10,
-            "retweets_amount": 2,
-            "replies_amount": 5
-        },{
-            "id": 1,
-            "user": {
-                "at": "@franz_cas",
-                "name": "Franz Castillo",
-                "is_profile_public": false,
-                "is_blue": true
-            },
-            "timestamp": "2022-01-01T00:00:00Z",
-            "has_media": true,
-            "has_poll": true,
-            "content": "This is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweet",
-            "likes_amount": 10,
-            "retweets_amount": 2,
-            "replies_amount": 5
-        },{
-            "id": 1,
-            "user": {
-                "at": "@franz_cas",
-                "name": "Franz Castillo",
-                "is_profile_public": false,
-                "is_blue": true
-            },
-            "timestamp": "2022-01-01T00:00:00Z",
-            "has_media": true,
-            "has_poll": true,
-            "content": "This is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweet",
-            "likes_amount": 10,
-            "retweets_amount": 2,
-            "replies_amount": 5
-        },{
-            "id": 1,
-            "user": {
-                "at": "@franz_cas",
-                "name": "Franz Castillo",
-                "is_profile_public": false,
-                "is_blue": true
-            },
-            "timestamp": "2022-01-01T00:00:00Z",
-            "has_media": true,
-            "has_poll": true,
-            "content": "This is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweet",
-            "likes_amount": 10,
-            "retweets_amount": 2,
-            "replies_amount": 5
-        },{
-            "id": 1,
-            "user": {
-                "at": "@franz_cas",
-                "name": "Franz Castillo",
-                "is_profile_public": false,
-                "is_blue": true
-            },
-            "timestamp": "2022-01-01T00:00:00Z",
-            "has_media": true,
-            "has_poll": true,
-            "content": "This is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweet",
-            "likes_amount": 10,
-            "retweets_amount": 2,
-            "replies_amount": 5
-        },{
-            "id": 1,
-            "user": {
-                "at": "@franz_cas",
-                "name": "Franz Castillo",
-                "is_profile_public": false,
-                "is_blue": true
-            },
-            "timestamp": "2022-01-01T00:00:00Z",
-            "has_media": true,
-            "has_poll": true,
-            "content": "This is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweet",
-            "likes_amount": 10,
-            "retweets_amount": 2,
-            "replies_amount": 5
-        },{
-            "id": 1,
-            "user": {
-                "at": "@franz_cas",
-                "name": "Franz Castillo",
-                "is_profile_public": false,
-                "is_blue": true
-            },
-            "timestamp": "2022-01-01T00:00:00Z",
-            "has_media": true,
-            "has_poll": true,
-            "content": "This is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweetThis is a sample tweet",
-            "likes_amount": 10,
-            "retweets_amount": 2,
-            "replies_amount": 5
+            "replies_amount": 5,
         },
     ]);
 
