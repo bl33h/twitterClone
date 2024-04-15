@@ -47,6 +47,7 @@
     birthdate: date,
     joined_on: date,
     is_profile_public: boolean,
+    is_blue: boolean,
     located_in: {
         timestamp: Date
         currently_in: Boolean
