@@ -78,7 +78,6 @@ app.get('/', async (req, res) => {
         `,
         { tag: tag }
       );
-  
       const user = result.records.map(record => {
         // Mapear los resultados a un objeto JavaScript
         return {
@@ -88,12 +87,19 @@ app.get('/', async (req, res) => {
           birthdate: record.get('birthdate'),
           joined_on: record.get('joined_on'),
           is_profile_public: record.get('is_profile_public'),
+          is_blue: record.get('is_blue'),
           located_in: record.get('located_in'),
           following_amount: record.get('following_amount').toNumber(),
           followers_amount: record.get('followers_amount').toNumber(),
           tweets: record.get('tweets').map(tweet => {
             return {
               id: tweet.get('id').toNumber(),
+              user: { 
+                tag: tag,
+                username: record.get('username'), 
+                is_profile_public: record.get('is_profile_public'),
+                is_blue: record.get('is_blue')
+              },
               timestamp: tweet.get('timestamp'),
               has_media: tweet.get('has_media'),
               has_poll: tweet.get('has_poll'),
