@@ -1,4 +1,7 @@
 import pfp from '../../assets/images/defaultPFP.jpg';
+import media from '../../assets/images/defaultMedia.png';
+import poll from '../../assets/images/defaultPoll.png';
+
 import {
     moreTweet,
     privateAccount,
@@ -63,6 +66,10 @@ const Tweet = ({data}) => {
                     </div>
                 </div>
                 <div className={"tweet-content"} dangerouslySetInnerHTML={{__html: convertHashtagsAndMentionsToLinks(content)}}/>
+                <div className={"tweet-media"}>
+                    {has_media && <img src={media} alt="media"/>}
+                    {has_poll && <img src={poll} alt="poll"/>}
+                </div>
                 <div className={"interactions"}>
                     <div className={"replies"}>
                     {replies} <span>{replies_amount}</span>
