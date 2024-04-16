@@ -1,9 +1,23 @@
 import {NavLink} from "react-router-dom";
-import { twitter, home, explore, notifications, messages, lists, bookmarks, profile, more } from "../../assets/icons/icons";
+import {
+    bookmarks,
+    explore,
+    home,
+    lists,
+    messages,
+    more,
+    notifications,
+    profile,
+    twitter
+} from "../../assets/icons/icons";
+import {UserContext} from "../../App";
+import React from "react";
 
 import './leftPane.scss'
 
 const LeftPane = () => {
+    const {tag, username} = React.useContext(UserContext);
+
     return (
         <div className="left-pane">
             <div className={"container"}>
@@ -30,7 +44,7 @@ const LeftPane = () => {
                     <NavLink to={"/profile"} activeClassName="selected">
                         <span>{profile} Profile</span>
                     </NavLink>
-                    <button className={"more"} >
+                    <button className={"more"}>
                         <span>{more}More</span>
                     </button>
 
@@ -45,8 +59,8 @@ const LeftPane = () => {
                             />
                         </div>
                         <div>
-                            <div className={"name"}>Franz 🦦</div>
-                            <div className={"username"}>@franz_cas</div>
+                            <div className={"name"}>{username}</div>
+                            <div className={"username"}>@{tag}</div>
                         </div>
                     </button>
                 </footer>

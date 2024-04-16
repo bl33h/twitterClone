@@ -2,14 +2,18 @@ import React, {useEffect, useState} from "react";
 import {birthday, calendar, location} from "../../assets/icons/icons";
 import "./profile.scss";
 
+import {UserContext} from "../../App";
+
 function Profile() {
+    const {tag} = React.useContext(UserContext);
     const [profile, setProfile] = useState({});
 
     useEffect(() => {
-        fetch("http://localhost:3001/profile/donald34")
+        fetch(`https://localhost:3001/profile/${tag}`)
             .then(res => res.json())
-            .then(data => setProfile(data));
-    }, []);
+            .then(data => setProfile(data))
+            .then(console.log(profile));
+    }, [tag]);
 
     return (
         <div className={"profile"}>
