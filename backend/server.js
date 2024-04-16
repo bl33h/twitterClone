@@ -114,24 +114,24 @@ app.get('/', async (req, res) => {
         `
         MATCH (u:user {Tag: $tag})
         MATCH (u)-[loc:LOCATED_IN]->(location:location)
-        OPTIONAL MATCH (u)-[t:TWEETED|RETWEETED]->(tweet:tweet)
+        OPTIONAL MATCH (u)-[t:TWEETED]->(tweet:tweet)
         OPTIONAL MATCH (:user)-[like:LIKED]->(tweet)
         OPTIONAL MATCH (:tweet)-[reply:REPLIES_TO]->(tweet)
         OPTIONAL MATCH (:user)-[retweet:RETWEETED]->(tweet)
         OPTIONAL MATCH (u)-[:FOLLOWS]->(following:user)
         OPTIONAL MATCH (follower:user)-[:FOLLOWS]->(u)
         WITH u, loc, tweet, t, location, following, follower, COUNT(DISTINCT like) as likes_amount, COUNT(DISTINCT retweet) as retweets_amount, COUNT(DISTINCT reply) as replies_amount
-        WITH u, loc, tweet, t, location, following, follower, COLLECT({
+        WITH u, u:Blue as is_blue, loc, tweet, t, location, following, follower, COLLECT({
             id: tweet.Id,
             timestamp: t.TimeStamp,
-            has_media: t.HasMedia IS NOT NULL,
-            has_poll: t.HasPoll IS NOT NULL,
+            has_media: t.HasMedia,
+            has_poll: t.HasPoll,
             content: tweet.Content,
             likes_amount: likes_amount,
             retweets_amount: retweets_amount,
             replies_amount: replies_amount
         }) AS all_tweets
-        ORDER BY loc.Timestamp DESC
+        ORDER BY loc.TimeStamp DESC
         RETURN
             u.Tag AS tag,
             u.Username AS username,
@@ -139,6 +139,7 @@ app.get('/', async (req, res) => {
             u.Birthday AS birthdate,
             u.Joined_on AS joined_on,
             u.Is_profile_public AS is_profile_public,
+            is_blue,
             {
                 timestamp: loc.TimeStamp,
                 currently_in: loc.CurrentlyIn,
@@ -169,7 +170,8 @@ app.get('/', async (req, res) => {
               user: { 
                 tag: tag,
                 username: record.get('username'), 
-                is_profile_public: record.get('is_profile_public')
+                is_profile_public: record.get('is_profile_public'),
+                is_blue: record.get('is_blue')
               },
               timestamp: tweet[0].timestamp,
               has_media: tweet[0].has_media,
