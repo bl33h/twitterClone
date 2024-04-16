@@ -1,45 +1,15 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {birthday, calendar, location} from "../../assets/icons/icons";
 import "./profile.scss";
 
 function Profile() {
-    const [profile, setProfile] = useState(
-        {
-            "tag": "franz_castillo",
-            "username": "Franz 🤔",
-            "description": "Una descripción de usuary sexy",
-            "birthdate": "1990-01-01",
-            "joined_on": "2010-01-01",
-            "is_profile_public": true,
-            "is_blue": false,
-            "located_in": {
-                "timestamp": "2022-01-01",
-                "currently_in": "City Name",
-                "lives_there": true,
-                "location_name": "Paris, France",
-            },
-            "following_amount": 100,
-            "followers_amount": 200,
-            "tweets": [
-                {
-                    "id": 1,
-                    "user": {
-                        "tag": "userTag",
-                        "username": "username",
-                        "is_profile_public": true,
-                        "is_blue": false
-                    },
-                    "timestamp": "2022-01-01",
-                    "has_media": true,
-                    "has_poll": false,
-                    "content": "Tweet content",
-                    "likes_amount": 50,
-                    "retweets_amount": 20,
-                    "replies_amount": 10
-                }
-            ]
-        },
-    );
+    const [profile, setProfile] = useState({});
+
+    useEffect(() => {
+        fetch("http://localhost:3001/profile/donald34")
+            .then(res => res.json())
+            .then(data => setProfile(data));
+    }, []);
 
     return (
         <div className={"profile"}>
@@ -58,7 +28,10 @@ function Profile() {
                 <br/>
                 <div className={"dates"}>
                     <div className={"personal"}>
-                        <span className={"move"}>{location} {profile.located_in.location_name}</span>
+                        <span className={"move"}>
+                            {location}
+                            {profile.located_in ? profile.located_in.location_name : 'Location not provided'}
+                        </span>
                         <span className={"move"}>{birthday} {profile.birthdate}</span>
                     </div>
                     <div className={"joined"}>
