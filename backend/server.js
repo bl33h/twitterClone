@@ -46,8 +46,8 @@ app.get('/', async (req, res) => {
       const result = await session.run('MATCH (n:user {Tag: $tag}) RETURN n', { tag: tag });
       const nodes = result.records.map(record => {
         return {
-          tag: record.get('n').properties.tag,
-          username: record.get('n').properties.username
+          tag: record.get('n').properties.Tag,
+          username: record.get('n').properties.Username
         };
       });
       console.log("Formatted nodes sent to frontend:", nodes);
