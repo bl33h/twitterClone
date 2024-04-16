@@ -94,36 +94,41 @@ app.get('/', async (req, res) => {
     try {
       const result = await session.run(
         `
-        MATCH (u:User {tag: $tag})
-        MATCH (u)-[:LOCATED_IN]->(location:Location)
-        OPTIONAL MATCH (u)-[:FOLLOWS]->(following:User)
-        OPTIONAL MATCH (follower:User)-[:FOLLOWS]->(u)
-        OPTIONAL MATCH (u)-[:TWEETED|RETWEETED]->(tweet:Tweet)
+        MATCH (u:user {Tag: $tag})
+        MATCH (u)-[loc:LOCATED_IN]->(location:location)
+        OPTIONAL MATCH (u)-[t:TWEETED|RETWEETED]->(tweet:tweet)
+        OPTIONAL MATCH (tweet)-[like:LIKED]->(:user)
+        OPTIONAL MATCH (tweet)-[reply:REPLIES_TO]->(:tweet)
+        OPTIONAL MATCH (tweet)-[retweet:RETWEETED]->(:user)
+        OPTIONAL MATCH (u)-[:FOLLOWS]->(following:user)
+        OPTIONAL MATCH (follower:user)-[:FOLLOWS]->(u)
+        WITH u, loc, tweet, t, location, following, follower, COUNT(DISTINCT like) as likes_amount, COUNT(DISTINCT retweet) as retweets_amount, COUNT(DISTINCT reply) as replies_amount
+        WITH u, loc, tweet, t, location, following, follower, COLLECT({
+            id: tweet.Id,
+            timestamp: t.Timestamp,
+            has_media: t.HasMedia IS NOT NULL,
+            has_poll: t.HasPoll IS NOT NULL,
+            content: tweet.Content,
+            likes_amount: likes_amount,
+            retweets_amount: retweets_amount,
+            replies_amount: replies_amount
+        }) AS tweets
         RETURN
-            u.tag AS tag,
-            u.username AS username,
-            u.description AS description,
-            u.birthdate AS birthdate,
-            u.joined_on AS joined_on,
-            u.is_profile_public AS is_profile_public,
+            u.Tag AS tag,
+            u.Username AS username,
+            u.Description AS description,
+            u.Birthdate AS birthdate,
+            u.Joined_on AS joined_on,
+            u.Is_profile_public AS is_profile_public,
             {
-                timestamp: location.timestamp,
-                currently_in: location.currently_in,
-                lives_there: location.lives_there,
-                location_name: location.name
+                timestamp: loc.Timestamp,
+                currently_in: loc.CurrentlyIn,
+                lives_there: loc.LivesThere,
+                location_name: location.Name
             } AS located_in,
             COUNT(DISTINCT following) AS following_amount,
             COUNT(DISTINCT follower) AS followers_amount,
-            COLLECT({
-                id: tweet.id,
-                timestamp: tweet.timestamp,
-                has_media: EXISTS(tweet.media),
-                has_poll: EXISTS(tweet.poll),
-                content: tweet.content,
-                likes_amount: tweet.likes_amount,
-                retweets_amount: tweet.retweets_amount,
-                replies_amount: tweet.replies_amount
-            }) AS tweets
+            tweets
         `,
         { tag: tag }
       );
@@ -136,35 +141,33 @@ app.get('/', async (req, res) => {
           birthdate: record.get('birthdate'),
           joined_on: record.get('joined_on'),
           is_profile_public: record.get('is_profile_public'),
-          is_blue: record.get('is_blue'),
           located_in: record.get('located_in'),
           following_amount: record.get('following_amount').toNumber(),
           followers_amount: record.get('followers_amount').toNumber(),
           tweets: record.get('tweets').map(tweet => {
             return {
-              id: tweet.get('id').toNumber(),
+              id: tweet.id,
               user: { 
                 tag: tag,
                 username: record.get('username'), 
-                is_profile_public: record.get('is_profile_public'),
-                is_blue: record.get('is_blue')
+                is_profile_public: record.get('is_profile_public')
               },
-              timestamp: tweet.get('timestamp'),
-              has_media: tweet.get('has_media'),
-              has_poll: tweet.get('has_poll'),
-              content: tweet.get('content'),
-              likes_amount: tweet.get('likes_amount').toNumber(),
-              retweets_amount: tweet.get('retweets_amount').toNumber(),
-              replies_amount: tweet.get('replies_amount').toNumber()
+              timestamp: tweet.timestamp,
+              has_media: tweet.has_media,
+              has_poll: tweet.has_poll,
+              content: tweet.content,
+              likes_amount: tweet.likes_amount.toNumber() || 0,
+              retweets_amount: tweet.retweets_amount.toNumber() || 0,
+              replies_amount: tweet.replies_amount.toNumber() || 0
             };
           })
         };
       });
-  
-      res.json(user); // Enviar el objeto JSON como respuesta
+      console.log("Formatted nodes sent to frontend:", user);
+      res.send(user);
     } catch (error) {
-      console.error('Error al ejecutar la consulta Cypher:', error);
-      res.status(500).send('Error interno del servidor');
+      console.error('Error accessing Neo4j', error);
+      res.status(500).send('Error accessing Neo4j');
     }
   }); 
 
