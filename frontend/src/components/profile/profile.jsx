@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {birthday, calendar, location} from "../../assets/icons/icons";
+import {birthday, calendar, location as locationSVG} from "../../assets/icons/icons";
 import "./profile.scss";
 
 import {UserContext} from "../../App";
@@ -25,7 +25,7 @@ function transformTweet(tweet) {
     return {
         id: tweet.id,
         user: {
-            at: '@'+tweet.user.tag,
+            at: '@' + tweet.user.tag,
             name: tweet.user.username,
             is_profile_public: tweet.user.is_profile_public,
             is_blue: tweet.user.is_blue
@@ -44,8 +44,6 @@ function transformTweet(tweet) {
 function Profile() {
     const {tag} = React.useContext(UserContext);
     const [profile, setProfile] = useState({});
-
-
     useEffect(() => {
         fetch(`http://localhost:3001/profile/${tag}`)
             .then(res => res.json())
@@ -62,12 +60,69 @@ function Profile() {
             });
     }, [tag]);
 
+    const [showForm, setShowForm] = useState(false);
+    const [username, setUsername] = useState("");
+    const [description, setDescription] = useState("");
+    const [birthdate, setBirthdate] = useState("");
+    const [location, setLocation] = useState("");
+    const [isPublic, setIsPublic] = useState(false);
+
+    const handleEditProfileClick = () => {
+        setUsername(profile.username);
+        setDescription(profile.description);
+        const formattedBirthdate = new Date(profile.birthdate).toISOString().substring(0, 10);
+        setBirthdate(formattedBirthdate);
+        setLocation(profile.located_in ? profile.located_in.location_name : '');
+        setIsPublic(profile.is_profile_public);
+
+        setShowForm(!showForm);
+    };
+
+    const handleFormSubmit = (event) => {
+        event.preventDefault();
+
+        const username = event.target.elements[0].value;
+        const description = event.target.elements[1].value;
+        const birthdate = event.target.elements[2].value;
+        const location = event.target.elements[3].value;
+        const isPublic = event.target.elements[4].checked;
+
+
+        const data = {
+            tag,
+            username,
+            description,
+            birthdate,
+            location,
+            isPublic
+        };
+
+        console.log(data);
+    };
+
     return (
         <div className={"profile"}>
             <div className={"header"}>
                 <div className={"edit"}>
-                    <button>Edit Profile</button>
+                    <button onClick={handleEditProfileClick}>Edit Profile</button>
                 </div>
+                {showForm && (
+                    <form onSubmit={handleFormSubmit}>
+                        <input type={"text"} placeholder={"Username"} value={username}
+                               onChange={e => setUsername(e.target.value)}/>
+                        <textarea placeholder={"Description"} value={description}
+                                  onChange={e => setDescription(e.target.value)}/>
+                        <input type={"date"} placeholder={"Birthdate"} value={birthdate}
+                               onChange={e => setBirthdate(e.target.value)}/>
+                        <input type={"text"} placeholder={"Location"} value={location}
+                               onChange={e => setLocation(e.target.value)}/>
+                        <label>
+                            <input type={"checkbox"} checked={isPublic} onChange={e => setIsPublic(e.target.checked)}/>
+                            Public Profile
+                        </label>
+                        <button type="submit">Save</button>
+                    </form>
+                )}
                 <div className={"information"}>
                     <div className={"names"}>
                         <span id={"username"}>{profile.username}</span>
@@ -81,8 +136,8 @@ function Profile() {
                     <div className={"dates"}>
                         <div className={"personal"}>
                         <span className={"move"}>
-                            {location}
-                            {profile.located_in ? profile.located_in.location_name : 'Location not provided'}
+                            <span
+                                className={"move"}>{locationSVG} {profile.located_in ? profile.located_in.location_name : 'Location not provided'}</span>
                         </span>
                             <span className={"move"}>{birthday} {profile.birthdate}</span>
                         </div>
