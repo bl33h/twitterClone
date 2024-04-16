@@ -117,7 +117,7 @@ app.get('/', async (req, res) => {
             u.Tag AS tag,
             u.Username AS username,
             u.Description AS description,
-            u.Birthdate AS birthdate,
+            u.Birthday AS birthdate,
             u.Joined_on AS joined_on,
             u.Is_profile_public AS is_profile_public,
             {
