@@ -2,6 +2,8 @@ import pfp from '../../assets/images/defaultPFP.jpg';
 import media from '../../assets/images/defaultMedia.png';
 import poll from '../../assets/images/defaultPoll.png';
 
+import {UserProvider} from "../../contexts/userProvider";
+
 import {
     analytics,
     likes,
@@ -24,7 +26,25 @@ function convertHashtagsAndMentionsToLinks(content) {
     return newContent;
 }
 
+function handleReply(tweetId) {
+    console.log(`Reply call for on tweet ${tweetId}`);
+}
+
+function handleRetweet(tweetId) {
+    console.log(`Retweet call for on tweet ${tweetId}`);
+}
+
+function handleLike(tweetId) {
+    console.log(`Like call for on tweet ${tweetId}`);
+}
+
+function handleAnalytics(tweetId) {
+    console.log(`Analytics call for on tweet ${tweetId}`);
+}
+
 const Tweet = ({data}) => {
+    const currentUser = UserProvider.tag;
+
     const {
         id,
         user: {
@@ -74,18 +94,18 @@ const Tweet = ({data}) => {
                     {has_poll && <img src={poll} alt="poll"/>}
                 </div>
                 <div className={"interactions"}>
-                    <div className={"replies"}>
+                    <button className={"replies"} onClick={() => handleReply(id)}>
                         {replies} <span>{replies_amount}</span>
-                    </div>
-                    <div className={"retweets"}>
+                    </button>
+                    <button className={"retweets"} onClick={() => handleRetweet(id)}>
                         {retweets} <span>{retweets_amount}</span>
-                    </div>
-                    <div className={"likes"}>
+                    </button>
+                    <button className={"likes"} onClick={() => handleLike(id)}>
                         {likes} <span>{likes_amount}</span>
-                    </div>
-                    <div className={"analytics"}>
+                    </button>
+                    <button className={"analytics"} onClick={() => handleAnalytics(id)}>
                         {analytics}
-                    </div>
+                    </button>
                     <div className={"options"}>
                         <button>{save}</button>
                         <button>{share}</button>

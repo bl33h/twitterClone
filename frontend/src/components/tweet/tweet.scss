@@ -131,6 +131,13 @@
       margin-top: 0.5em;
       cursor: pointer;
 
+      button{
+        background: none;
+        border: none;
+        padding: 0.5em;
+        cursor: pointer;
+      }
+
       .replies, .retweets, .likes, .analytics, .options {
         display: flex;
         flex-direction: row;
