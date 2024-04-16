@@ -1,50 +1,48 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 
 import Publisher from "./publisher";
 import Tweet from '../tweet/tweet';
+import {UserProvider} from "../../contexts/userProvider";
+import {UserContext} from "../../App";
+
+function parseJson(json) {
+    return {
+        id: json.id,
+        user: {
+            at: '@' + json.user.tag,
+            name: json.user.username,
+            is_profile_public: json.user.is_profile_public,
+            is_blue: json.user.is_blue
+        },
+        timestamp: new Date(
+            json.timestamp.year.low,
+            json.timestamp.month.low - 1, // JavaScript counts months from 0
+            json.timestamp.day.low,
+            json.timestamp.hour.low,
+            json.timestamp.minute.low,
+            json.timestamp.second.low
+        ),
+        has_media: json.has_media,
+        has_poll: json.has_poll,
+        content: json.content,
+        likes_amount: json.likes_amount,
+        retweets_amount: json.retweets_amount,
+        replies_amount: json.replies_amount,
+        location: null // As the JSON object doesn't have a location property, we set it to null
+    };
+}
 
 function Feed() {
-    const [tweets, setTweets] = useState([
-        {
-            "id": 1,
-            "user": {
-                "at": "@franz_cas",
-                "name": "Franz Castillo",
-                "is_profile_public": false,
-                "is_blue": true
-            },
-            "timestamp": "2022-01-01T00:00:00Z",
-            "has_media": true,
-            "has_poll": true,
-            "content": "This is a sample tweet #hashtag |  @franz_cas",
-            "likes_amount": 10,
-            "retweets_amount": 2,
-            "replies_amount": 5,
-            "location": "Manila, Philippines",
-        }, {
-            "id": 1,
-            "user": {
-                "at": "@franz_cas",
-                "name": "Franz Castillo",
-                "is_profile_public": false,
-                "is_blue": true
-            },
-            "timestamp": "2022-01-01T00:00:00Z",
-            "has_media": false,
-            "has_poll": true,
-            "content": "This is a sample tweet #hashtag |  @.franz_cas",
-            "likes_amount": 10,
-            "retweets_amount": 2,
-            "replies_amount": 5,
-        },
-    ]);
+    const {tag} = React.useContext(UserContext);
+    const [tweets, setTweets] = useState([]);
 
-    // useEffect(() => {
-    //     fetch('https://your-api-url.com/tweets')
-    //         .then(response => response.json())
-    //         .then(data => setTweets(data))
-    //         .catch(error => console.error('Error:', error));
-    // }, []);
+    useEffect(() => {
+        fetch(`http://localhost:3001/feed/${tag}`)
+            .then(response => response.json())
+            .then(data => data.map(parseJson))
+            .then(data => setTweets(data))
+            .catch(error => console.error('Error:', error));
+    }, []);
 
     return (
         <div className={"feed"}>
