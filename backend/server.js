@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const neo4j = require('neo4j-driver');
+const { v4: uuidv4 } = require('uuid');
 require('dotenv').config();
 
 const app = express();
@@ -15,6 +16,25 @@ const user = process.env.NEO4J_USER;
 const password = process.env.NEO4J_PASSWORD;
 const driver = neo4j.driver(uri, neo4j.auth.basic(user, password));
 const session = driver.session();
+
+async function generarUUIDUnico(session) {
+  let uuidUnico = uuidv4();
+  let tweetExistente = true;
+
+  while (tweetExistente) {
+    const resultado = await session.run(
+      'MATCH (tweet:Tweet {id: $uuid}) RETURN tweet',
+      { uuid: uuidUnico }
+    );
+    if (resultado.records.length === 0) {
+      tweetExistente = false;
+    } else {
+      uuidUnico = uuidv4();
+    }
+  }
+
+  return uuidUnico;
+}
 
 app.get('/', async (req, res) => {
     try {
@@ -195,7 +215,21 @@ app.get('/', async (req, res) => {
   }); 
 
 
-
+  app.post('/new', async (req, res) => {
+    const data = req.body;
+    const uuidUnico = await generarUUIDUnico(session);
+    const result = await session.run(
+      `
+      MATCH (u:user {Tag: $tag})
+      CREATE (t:tweet {Money_generated: 0, Impressions: 0, Profile_visits: 0, Content: $content, Hashtags: $hashtags, Id: $id, Detail_expands:0, Engagements: 0, New_followers: 0})
+      CREATE (u)-[:TWEETED {Mentions:$mentions, HasMedia: $has_media, TweetId: $id, HasPoll: $has_poll, UserTag: $tag, TimeStamp:$timestamp}]->(t)
+      `,
+      { tag: data.tag, content: data.content, hashtags: data.hashtags, id: uuidUnico, has_media: data.has_media, has_poll: data.has_poll, timestamp: Date.now(), mentions: data.mentions }
+    );
+    
+    res.status(200).send('Respuesta exitosa');
+  });
+  
 
 
 app.listen(port, () => {
