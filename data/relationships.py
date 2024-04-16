@@ -26,6 +26,7 @@ location_ids = read_csv_data('location.csv', 'Id')
 messages_id = read_csv_data('message.csv', 'Id')
 user_tags = read_csv_data('user.csv', 'Tag')
 tweet_ids = read_csv_data('tweet.csv', 'Id')
+chat_ids = read_csv_data('chat.csv', 'Id')
 
 # --- FOLLOWING relationship ---
 def generate_following_data(user_tags, num_relationships):
@@ -73,11 +74,12 @@ def generate_tweets_relationships(user_tags, tweet_ids, num_tweets):
         if random.choice([True, False]):
             user_tag = random.choice(user_tags)
             tweet_id = random.choice(tweet_ids)
+            timeStamp = fake.date_this_decade().isoformat()
             content = tweet_content[tweet_ids.index(tweet_id)]
             has_media = str(random.choice([True, False]))
             has_poll = str(random.choice([True, False]))
             mentions = ','.join(random.sample(user_tags, min(3, len(user_tags))))
-            retweeted.append([user_tag, tweet_id, content, has_media, has_poll, mentions])
+            retweeted.append([user_tag, tweet_id, timeStamp, content, has_media, has_poll, mentions])
 
     return tweeted, retweeted
 
@@ -134,6 +136,18 @@ def generate_sent_messages(user_tags, message_id, num_likes):
 
     return sent_messages_data
 
+# --- PARTICIPATES IN relationship ---
+def generate_participates_in_data(user_tags, chat_ids, num_relationships):
+    participates_in_data = []
+    for _ in range(num_relationships):
+        user_tag = random.choice(user_tags)
+        chat_id = random.choice(chat_ids)
+        since = fake.date_time_this_decade().isoformat()
+        is_admin = random.choice([True, False])
+        muted_mentions = random.choice([True, False])
+        participates_in_data.append([user_tag, chat_id, since, is_admin, muted_mentions])
+    return participates_in_data
+
 # relationships count
 num_relationships = 12000
 num_messages = 2000
@@ -143,28 +157,31 @@ num_replies = 20000
 
 # headers and writing functions call
 follows_data = generate_following_data(user_tags, num_relationships)
-write_csv_data('following.csv', ['FollowerTag', 'FollowedTag', 'Timestamp', 'IsMuted', 'NotificationsActive'], follows_data)
+write_csv_data('following.csv', ['FollowerTag', 'FollowedTag', 'TimeStamp', 'IsMuted', 'NotificationsActive'], follows_data)
 
 located_in_data = generate_located_in_data(user_tags, location_ids, num_relationships)
-write_csv_data('locatedIn.csv', ['UserTag', 'LocationId', 'Timestamp', 'CurrentlyIn', 'LivesThere'], located_in_data)
+write_csv_data('locatedIn.csv', ['UserTag', 'LocationId', 'TimeStamp', 'CurrentlyIn', 'LivesThere'], located_in_data)
 
 tweeted, retweeted = generate_tweets_relationships(user_tags, tweet_ids, num_tweets)
 tweeted_header = ['UserTag', 'TweetId', 'TimeStamp', 'HasMedia', 'HasPoll', 'Mentions']
-retweeted_header = ['UserTag', 'TweetId', 'Content', 'HasMedia', 'HasPoll', 'Mentions']
+retweeted_header = ['UserTag', 'TweetId', 'TimeStamp', 'Content', 'HasMedia', 'HasPoll', 'Mentions']
 write_csv_data('tweeted.csv', tweeted_header, tweeted)
 write_csv_data('retweeted.csv', retweeted_header, retweeted)
 
 likes_data = generate_likes_data(user_tags, tweet_ids, num_likes)
-likes_header = ['UserTag', 'TweetId', 'Timestamp', 'Device', 'OS']
+likes_header = ['UserTag', 'TweetId', 'TimeStamp', 'Device', 'OS']
 write_csv_data('liked.csv', likes_header, likes_data)
 
 replies_data = generate_replies_data(user_tags, tweet_ids, num_replies)
-replies_header = ['UserTag', 'TweetId', 'ReplyToTweetId', 'Timestamp']
+replies_header = ['UserTag', 'TweetId', 'ReplyToTweetId', 'TimeStamp']
 write_csv_data('replies.csv', replies_header, replies_data)
 
 sent_data = generate_sent_messages(user_tags, messages_id, num_messages)
-sent_header = ['UserTag', 'MessageId', 'Timestamp', 'Device', 'OS']
+sent_header = ['UserTag', 'MessageId', 'TimeStamp', 'Device', 'OS']
 write_csv_data('sent.csv', sent_header, sent_data)
+
+participates_in_data = generate_participates_in_data(user_tags, chat_ids, num_relationships)
+write_csv_data('participatesIn.csv', ['UserTag', 'ChatId', 'Since', 'IsAdmin', 'MutedMentions'], participates_in_data)
 
 # success message
 print(f"Generated and wrote {num_relationships} 'FOLLOWING' relationships to following.csv")
@@ -174,3 +191,4 @@ print(f"Generated 'RETWEETED' relationships: {len(retweeted)}")
 print(f"Generated and wrote {num_likes} 'LIKED' relationships to liked.csv")
 print(f"Generated and wrote {num_replies} 'REPLIES TO' relationships to replies.csv")
 print(f"Generated and wrote {num_likes} 'SENT' relationships to sent.csv")
+print(f"Generated and wrote {num_relationships} 'PARTICIPATES IN' relationships to participatesIn.csv")
