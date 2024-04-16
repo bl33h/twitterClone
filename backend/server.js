@@ -9,6 +9,7 @@ const port = process.env.PORT || 3001;
 
 // enable cors
 app.use(cors());
+app.use(express.json());
 
 // aura connection
 const uri = process.env.NEO4J_URI;
@@ -226,7 +227,7 @@ app.get('/', async (req, res) => {
       `,
       { tag: data.tag, content: data.content, hashtags: data.hashtags, id: uuidUnico, has_media: data.has_media, has_poll: data.has_poll, timestamp: Date.now(), mentions: data.mentions }
     );
-    
+
     res.status(200).send('Respuesta exitosa');
   });
   

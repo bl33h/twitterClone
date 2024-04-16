@@ -3,6 +3,7 @@ import "./publisher.scss";
 import {media, poll} from "../../assets/icons/icons";
 import pfp from '../../assets/images/defaultPFP.jpg';
 import {UserProvider} from "../../contexts/userProvider";
+import {UserContext} from "../../App";
 
 const getMentions = (content) => {
     return content.split(" ").filter(word => word.startsWith("@"));
@@ -13,9 +14,10 @@ const getHashtags = (content) => {
 }
 
 function Publisher() {
+    const {tag} = React.useContext(UserContext);
 
     const [tweetContent, setTweetContent] = useState({
-        tag: UserProvider.tag,
+        tag: tag,
         content: "",
         mentions: [],
         hashtags: [],
@@ -34,17 +36,21 @@ function Publisher() {
         tweetContent.mentions = getMentions(tweetContent.content);
         tweetContent.hashtags = getHashtags(tweetContent.content);
 
-        // const response = await fetch('https://localhost:3001/tweets', {
-        //     method: 'POST',
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //     },
-        //     body: JSON.stringify({ content: tweetContent }),
-        // });
-        //
-        // const data = await response.json();
-
-        console.log(tweetContent);
+        const response = await fetch('http://localhost:3001/new', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(tweetContent)
+        }).then((response) => {
+            if (response.ok) {
+                console.log("Tweet sent successfully");
+            } else {
+                console.log("Error sending tweet");
+            }
+        }).catch((error) => {
+            console.error('=( Error:', error);
+        });
     };
 
     return (
