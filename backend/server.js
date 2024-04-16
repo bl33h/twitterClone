@@ -115,9 +115,9 @@ app.get('/', async (req, res) => {
         MATCH (u:user {Tag: $tag})
         MATCH (u)-[loc:LOCATED_IN]->(location:location)
         OPTIONAL MATCH (u)-[t:TWEETED|RETWEETED]->(tweet:tweet)
-        OPTIONAL MATCH (tweet)-[like:LIKED]->(:user)
-        OPTIONAL MATCH (tweet)-[reply:REPLIES_TO]->(:tweet)
-        OPTIONAL MATCH (tweet)-[retweet:RETWEETED]->(:user)
+        OPTIONAL MATCH (:user)-[like:LIKED]->(tweet)
+        OPTIONAL MATCH (:tweet)-[reply:REPLIES_TO]->(tweet)
+        OPTIONAL MATCH (:user)-[retweet:RETWEETED]->(tweet)
         OPTIONAL MATCH (u)-[:FOLLOWS]->(following:user)
         OPTIONAL MATCH (follower:user)-[:FOLLOWS]->(u)
         WITH u, loc, tweet, t, location, following, follower, COUNT(DISTINCT like) as likes_amount, COUNT(DISTINCT retweet) as retweets_amount, COUNT(DISTINCT reply) as replies_amount
@@ -140,7 +140,7 @@ app.get('/', async (req, res) => {
             u.Joined_on AS joined_on,
             u.Is_profile_public AS is_profile_public,
             {
-                timestamp: loc.Timestamp,
+                timestamp: loc.TimeStamp,
                 currently_in: loc.CurrentlyIn,
                 lives_there: loc.LivesThere,
                 location_name: location.Name
@@ -161,23 +161,23 @@ app.get('/', async (req, res) => {
           joined_on: record.get('joined_on'),
           is_profile_public: record.get('is_profile_public'),
           located_in: record.get('located_in'),
-          following_amount: record.get('following_amount').toNumber(),
-          followers_amount: record.get('followers_amount').toNumber(),
+          following_amount: record.get('following_amount').low,
+          followers_amount: record.get('followers_amount').low,
           tweets: record.get('tweets').map(tweet => {
             return {
-              id: tweet.id,
+              id: tweet[0].id,
               user: { 
                 tag: tag,
                 username: record.get('username'), 
                 is_profile_public: record.get('is_profile_public')
               },
-              timestamp: tweet.timestamp,
-              has_media: tweet.has_media,
-              has_poll: tweet.has_poll,
-              content: tweet.content,
-              likes_amount: tweet.likes_amount.toNumber() || 0,
-              retweets_amount: tweet.retweets_amount.toNumber() || 0,
-              replies_amount: tweet.replies_amount.toNumber() || 0
+              timestamp: tweet[0].timestamp,
+              has_media: tweet[0].has_media,
+              has_poll: tweet[0].has_poll,
+              content: tweet[0].content,
+              likes_amount: tweet[0].likes_amount.low,
+              retweets_amount: tweet[0].retweets_amount.low,
+              replies_amount: tweet[0].replies_amount.low
             };
           })
         };
