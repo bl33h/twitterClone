@@ -9,74 +9,79 @@
   background: $background-color;
   padding-bottom: 1em;
 
-  .edit {
-    display: flex;
-    justify-content: flex-end;
-    margin-right: 1em;
+  .header {
+    border: 1px solid $border-color;
 
-    button {
-      margin-top: 1em;
-      background: $background-color;
-      color: $text-color;
-      border: 1px solid $border-color;
-      padding: 0.5em 1em;
-      border-radius: 1em;
-      font-weight: 700;
-      cursor: pointer;
-    }
-  }
-
-  .information {
-    margin-left: 1em;
-
-    .names {
+    .edit {
       display: flex;
-      flex-direction: column;
+      justify-content: flex-end;
+      margin-right: 1em;
 
-      #username {
+      button {
+        margin-top: 1em;
+        background: $background-color;
+        color: $text-color;
+        border: 1px solid $border-color;
+        padding: 0.5em 1em;
+        border-radius: 1em;
         font-weight: 700;
+        cursor: pointer;
       }
-
-      #tag {
-        color: darken($text-color, 20%);
-      }
-
     }
 
-    .description {
+    .information {
+      margin-left: 1em;
+      margin-bottom: 1em;
 
-    }
-
-    .dates {
-      color: darken($text-color, 20%);
-
-      svg {
-        width: 1em;
-        fill: darken($text-color, 20%)
-      }
-
-      .personal {
+      .names {
         display: flex;
-        align-items: center;
+        flex-direction: column;
 
-        .move {
-          margin-right: 0.5em;
+        #username {
+          font-weight: 700;
+        }
+
+        #tag {
+          color: darken($text-color, 20%);
+        }
+
+      }
+
+      .description {
+
+      }
+
+      .dates {
+        color: darken($text-color, 20%);
+
+        svg {
+          width: 1em;
+          fill: darken($text-color, 20%)
+        }
+
+        .personal {
+          display: flex;
+          align-items: center;
+
+          .move {
+            margin-right: 0.5em;
+          }
         }
       }
-    }
 
-    .following {
-      margin-top: 0.5em;
-      display: flex;
-      justify-content: start;
+      .following {
+        margin-top: 0.5em;
+        display: flex;
+        justify-content: start;
 
-      #followers-amount {
-        margin-left: 1em;
-      }
+        #followers-amount {
+          margin-left: 1em;
+        }
 
-      .darken {
-        margin-left: 0.5em;
-        color: darken($text-color, 20%);
+        .darken {
+          margin-left: 0.5em;
+          color: darken($text-color, 20%);
+        }
       }
     }
   }
