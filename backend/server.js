@@ -38,6 +38,24 @@ app.get('/', async (req, res) => {
       console.error('Error accessing Neo4j', error);
       res.status(500).send('Error accessing Neo4j');
     }
+  }); 
+  
+  app.get('/login/:tag', async (req, res) => {
+    const tag = req.params.tag;
+    try {
+      const result = await session.run('MATCH (n:user {Tag: $tag}) RETURN n', { tag: tag });
+      const nodes = result.records.map(record => {
+        return {
+          tag: record.get('n').properties.tag,
+          username: record.get('n').properties.username
+        };
+      });
+      console.log("Formatted nodes sent to frontend:", nodes);
+      res.send(nodes);
+    } catch (error) {
+      console.error('Error accessing Neo4j', error);
+      res.status(500).send('Error accessing Neo4j');
+    }
   });  
 
   app.get('/feed/:tag', async (req, res) => {
