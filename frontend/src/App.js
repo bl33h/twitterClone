@@ -4,6 +4,7 @@ import './App.scss';
 import {BrowserRouter, Route, Routes} from 'react-router-dom';
 import LeftPane from "./components/leftPane/leftPane";
 import Feed from "./components/feed/feed";
+import Profile from "./components/profile/profile";
 
 function App() {
     return (
@@ -18,7 +19,7 @@ function App() {
                         <Route path={"/messages"} element={"Messages"}/>
                         <Route path={"/bookmarks"} element={"Bookmarks"}/>
                         <Route path={"/lists"} element={"Lists"}/>
-                        <Route path={"/profile"} element={"Profile"}/>
+                        <Route path={"/profile"} element={<Profile/>}/>
                     </Routes>
                 </div>
                 <div className={"right-pane"}>Right Pane</div>

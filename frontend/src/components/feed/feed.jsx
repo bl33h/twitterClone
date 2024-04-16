@@ -47,9 +47,6 @@ function Feed() {
     // }, []);
 
     return (
-        /*
-        TODO: Implement the publisher component and style it
-         */
         <div className={"feed"}>
             <Publisher/>
             <div className={"tweets"}>

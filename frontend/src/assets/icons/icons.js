@@ -177,7 +177,21 @@ const poll = <svg viewBox="0 0 24 24" aria-hidden="true"
     </g>
 </svg>
 
+const birthday = <svg viewBox="0 0 24 24" aria-hidden="true"
+                      className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-115tad6 r-1d4mawv">
+    <g>
+        <path
+            d="M8 10c0-2.21 1.79-4 4-4v2c-1.1 0-2 .9-2 2H8zm12 1c0 4.27-2.69 8.01-6.44 8.83L15 22H9l1.45-2.17C6.7 19.01 4 15.27 4 11c0-4.84 3.46-9 8-9s8 4.16 8 9zm-8 7c3.19 0 6-3 6-7s-2.81-7-6-7-6 3-6 7 2.81 7 6 7z"></path>
+    </g>
+</svg>
 
+const calendar = <svg viewBox="0 0 24 24" aria-hidden="true"
+                      className="r-4qtqp9 r-yyyyoo r-1xvli5t r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-115tad6 r-1d4mawv">
+    <g>
+        <path
+            d="M7 4V3h2v1h6V3h2v1h1.5C19.89 4 21 5.12 21 6.5v12c0 1.38-1.11 2.5-2.5 2.5h-13C4.12 21 3 19.88 3 18.5v-12C3 5.12 4.12 4 5.5 4H7zm0 2H5.5c-.27 0-.5.22-.5.5v12c0 .28.23.5.5.5h13c.28 0 .5-.22.5-.5v-12c0-.28-.22-.5-.5-.5H17v1h-2V6H9v1H7V6zm0 6h2v-2H7v2zm0 4h2v-2H7v2zm4-4h2v-2h-2v2zm0 4h2v-2h-2v2zm4-4h2v-2h-2v2z"></path>
+    </g>
+</svg>
 
 export {
     twitter,
@@ -201,4 +215,6 @@ export {
     location,
     media,
     poll,
+    birthday,
+    calendar,
 }
