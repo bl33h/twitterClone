@@ -63,39 +63,41 @@ app.get('/', async (req, res) => {
     try {
       const result = await session.run(
       `
-      MATCH (u:User {tag: $tag})
-      OPTIONAL MATCH (u)-[:FOLLOWS]->(following:User)
-      OPTIONAL MATCH (following)-[rel:TWEETED]->(tweet:Tweet)
-      OPTIONAL MATCH (:User)-[likes:LIKED]->(tweet)
-      OPTIONAL MATCH (:User)-[rts:RETWEETED]->(tweet)
-      OPTIONAL MATCH (:Tweet)-[ans:REPLIES_TO]->(tweet)
-      RETURN tweet.id AS id,
+      MATCH (u:user {Tag: $tag})
+      OPTIONAL MATCH (u)-[:FOLLOWS]->(following:user)
+      OPTIONAL MATCH (following)-[rel:TWEETED]->(tweet:tweet)
+      OPTIONAL MATCH (:user)-[likes:LIKED]->(tweet)
+      OPTIONAL MATCH (:user)-[rts:RETWEETED]->(tweet)
+      OPTIONAL MATCH (:tweet)-[ans:REPLIES_TO]->(tweet)
+      RETURN tweet.Id AS id,
+      u:Blue as is_blue,
       following AS user,
-      rel.timestamp AS timestamp,
-      rel.has_media AS has_media,
-      rel.has_poll AS has_poll,
-      tweet.content AS content,
+      rel.TimeStamp AS timestamp,
+      rel.HasMedia AS has_media,
+      rel.HasPoll AS has_poll,
+      tweet.Content AS content,
       COUNT(DISTINCT ans) AS replies_amount,
       COUNT(DISTINCT likes) AS likes_amount,
       COUNT(DISTINCT rts) AS retweets_amount
       `
       , { tag: tag });
       const nodes = result.records.map(record => {
+        const user = record.get('user');
         return {
-          id: record.get('id').toNumber(),
+          id: record.get('id'),
           user: {
-            tag: record.get('user').properties.tag,
-            username: record.get('user').properties.username,
-            is_profile_public: record.get('user').properties.is_profile_public,
-            is_blue: record.get('user').properties.is_blue
+            tag: user.properties.Tag,
+            username: user.properties.Username,
+            is_profile_public: user.properties.Is_profile_public,
+            is_blue: record.get('is_blue')
           },
           timestamp: record.get('timestamp'),
           has_media: record.get('has_media'),
           has_poll: record.get('has_poll'),
           content: record.get('content'),
-          replies_amount: record.get('replies_amount').toNumber(),
-          likes_amount: record.get('likes_amount').toNumber(),
-          retweets_amount: record.get('retweets_amount').toNumber()
+          replies_amount: record.get('replies_amount').low,
+          likes_amount: record.get('likes_amount').low,
+          retweets_amount: record.get('retweets_amount').low
         };
       
       });
