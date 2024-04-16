@@ -1,0 +1,59 @@
+@import "../components.scss";
+
+
+.messages {
+  background: $background-color;
+  border-left: 1px solid $border-color;
+  border-right: 1px solid $border-color;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+
+    #title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-left: 0.4rem;
+      margin-top: 0.4rem;
+    }
+
+    .options {
+      margin-top: 0.5rem;
+      margin-right: 0.5em;
+
+      button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        border-radius: 100%;
+
+        &:hover {
+          background: transparentize($text-color, 0.8);
+        }
+      }
+
+      svg {
+        width: 1em;
+        fill: $text-color;
+        font-size: 1.5rem;
+        cursor: pointer;
+      }
+    }
+  }
+
+  .search {
+    width: 100%;
+
+    input {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid $border-color;
+        border-radius: 0.5rem;
+        background: $background-color;
+        color: $text-color;
+        font-size: 1rem;
+        margin-bottom: 1rem;
+    }
+  }
+}
