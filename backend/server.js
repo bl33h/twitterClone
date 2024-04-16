@@ -105,14 +105,15 @@ app.get('/', async (req, res) => {
         WITH u, loc, tweet, t, location, following, follower, COUNT(DISTINCT like) as likes_amount, COUNT(DISTINCT retweet) as retweets_amount, COUNT(DISTINCT reply) as replies_amount
         WITH u, loc, tweet, t, location, following, follower, COLLECT({
             id: tweet.Id,
-            timestamp: t.Timestamp,
+            timestamp: t.TimeStamp,
             has_media: t.HasMedia IS NOT NULL,
             has_poll: t.HasPoll IS NOT NULL,
             content: tweet.Content,
             likes_amount: likes_amount,
             retweets_amount: retweets_amount,
             replies_amount: replies_amount
-        }) AS tweets
+        }) AS all_tweets
+        ORDER BY loc.Timestamp DESC
         RETURN
             u.Tag AS tag,
             u.Username AS username,
@@ -128,7 +129,7 @@ app.get('/', async (req, res) => {
             } AS located_in,
             COUNT(DISTINCT following) AS following_amount,
             COUNT(DISTINCT follower) AS followers_amount,
-            tweets
+            COLLECT(DISTINCT all_tweets) as tweets
         `,
         { tag: tag }
       );
