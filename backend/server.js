@@ -209,7 +209,13 @@ app.get('/', async (req, res) => {
           content: record.get('content'),
           replies_amount: record.get('replies_amount').low,
           likes_amount: record.get('likes_amount').low,
-          retweets_amount: record.get('retweets_amount').low
+          retweets_amount: record.get('retweets_amount').low,
+          engagements: record.get('engagements').low,
+          money_generated: record.get('money_generated').low,
+          impressions: record.get('impressions').low,
+          profile_visits: record.get('profile_visits').low,
+          new_followers: record.get('new_followers').low,
+          detail_expands: record.get('detail_expands').low
         };
       
       });
@@ -243,7 +249,7 @@ app.get('/', async (req, res) => {
             content: tweet.Content,
             likes_amount: likes_amount,
             retweets_amount: retweets_amount,
-            replies_amount: replies_amount
+            replies_amount: replies_amount,
             engagements: tweet.Engagements,
             money_generated: tweet.Money_generated,
             impressions: tweet.Impressions,
@@ -299,7 +305,13 @@ app.get('/', async (req, res) => {
               content: tweet[0].content,
               likes_amount: tweet[0].likes_amount.low,
               retweets_amount: tweet[0].retweets_amount.low,
-              replies_amount: tweet[0].replies_amount.low
+              replies_amount: tweet[0].replies_amount.low,
+              engagements: tweet[0].engagements.low,
+              money_generated: tweet[0].money_generated.low,
+              impressions: tweet[0].impressions.low,
+              profile_visits: tweet[0].profile_visits.low,
+              new_followers: tweet[0].new_followers.low,
+              detail_expands: tweet[0].detail_expands.low
             };
           })
         };
