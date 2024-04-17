@@ -346,7 +346,7 @@ app.get('/', async (req, res) => {
     const fecha = moment().utc().format('YYYY-MM-DDTHH:mm:ssZ');
     const result = await session.run(
       `
-      MATCH (u:user {Tag: $tag}, loc:location {Name: $location})
+      MATCH (u:user {Tag: $tag}), (loc:location {Name: $location})
       MERGE (u)-[locin:LOCATED_IN]->(loc)
       ON CREATE
         SET u.Username = $username,
@@ -397,7 +397,7 @@ app.get('/', async (req, res) => {
     if (data.type == "LIKED"){
       const result = await session.run(
         `
-        MATCH (u:user {Tag: $tag}, t:tweet {Id: $id})
+        MATCH (u:user {Tag: $tag}), ( t:tweet {Id: $id})
         MERGE (u)-[rel:LIKED]->(t)
         ON CREATE SET rel.TimeStamp = datetime($timestamp),
                       rel.OS = $os,
@@ -412,7 +412,7 @@ app.get('/', async (req, res) => {
     else if (data.type == "RETWEETED"){
       const result = await session.run(
         `
-        MATCH (u:user {Tag: $tag}, t:tweet {Id: $id})
+        MATCH (u:user {Tag: $tag}), ( t:tweet {Id: $id})
         MERGE (u)-[rel:RETWEETED]->(t)
         ON CREATE SET rel.TimeStamp = datetime($timestamp)
                       rel.Mentions = $mentions,
@@ -429,7 +429,7 @@ app.get('/', async (req, res) => {
     else if (data.type == "REPLIES_TO"){
       const result = await session.run(
         `
-        MATCH (u:user {Tag: $tag}, t:tweet {Id: $id})
+        MATCH (u:user {Tag: $tag), ( t:tweet {Id: $id})
         MERGE (u)-[rel:REPLIES_TO]->(t)
         ON CREATE SET rel.TimeStamp = datetime($timestamp)
                       rel.Mentions = $mentions,
@@ -468,7 +468,7 @@ app.get('/', async (req, res) => {
     `, { id: id, content: data.content, mentions: data.mentions, });
 
     const result1 = await session.run(`
-    MATCH (c:chat {Id: $chat}, u:user {Tag: $tag}, m:message {Id: $id})
+    MATCH (c:chat {Id: $chat}), ( u:user {Tag: $tag}), ( m:message {Id: $id})
     CREATE (u)-[s:SENT {MessageId:$id, TimeStamp: datetime($timestamp), UserTag: $tag, Device: $device, OS: $os}]->(m)
     CREATE (c)<-[r:IS_FROM {Order: 0, Read: false, Edited: false, MessageId: $id, ChatId:$chat}]-(m)
 
