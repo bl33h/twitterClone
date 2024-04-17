@@ -397,8 +397,8 @@ app.post('/modifyt', async (req, res) => {
       MATCH (t)<-[rel:TWEETED]-(:user)
 
       SET t.Content = $content
-      SET t.HasMedia = $has_media
-      SET t.HasPoll = $has_poll
+      SET rel.HasMedia = $has_media
+      SET rel.HasPoll = $has_poll
       `,
         {id: data.id, content: data.content, has_media: data.has_media, has_poll: data.has_poll}
     );
