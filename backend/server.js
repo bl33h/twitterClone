@@ -434,23 +434,30 @@ app.post('/interactions', async (req, res) => {
             );
         }
     } else if (data.type === "RETWEETED") {
-        const result = await session.run(
-            `
-        MATCH (u:user {Tag: $tag}), ( t:tweet {Id: $id})
-        MERGE (u)-[rel:RETWEETED]->(t)
-        ON CREATE SET rel.TimeStamp = datetime($timestamp)
-                      rel.Mentions = $mentions,
-                      rel.HasMedia = $has_media,
-                      rel.HasPoll = $has_poll,
-                      rel.Content = $content,
-                      rel.TweetId = $id,
-                      rel.UserTag = $tag
-        ON MATCH 
-              IF EXISTS(rel) THEN DELETE rel
-        `,
-            {tag: data.tag, id: data.id}
-        );
-    } else if (data.type === "REPLIES_TO") {
+        const deleteResult = await session.run(
+          `
+          MATCH (u:user {Tag: $tag})-[rel:RETWEETED]->(t:tweet {Id: $id})
+          DELETE rel
+          `,
+              { tag: data.tag, id: data.id }
+          );
+          if (deleteResult.summary.counters.updates().relationshipsDeleted === 0) {
+            const createResult = await session.run(
+                `
+                MATCH (u:user {Tag: $tag}), ( t:tweet {Id: $id})
+                MERGE (u)-[rel:RETWEETED]->(t)
+                ON CREATE SET rel.TimeStamp = datetime($timestamp),
+                              rel.Mentions = $mentions,
+                              rel.HasMedia = $has_media,
+                              rel.HasPoll = $has_poll,
+                              rel.Content = $content,
+                              rel.TweetId = $id,
+                              rel.UserTag = $tag
+            `,
+                { tag: data.tag, id: data.id, timestamp: fecha, mentions: data.mentions, has_media: data.has_media, has_poll: data.has_poll, content: data.content}
+            );
+        }
+    }  else if (data.type === "REPLIES_TO") {
         const result = await session.run(
             `
         MATCH (u:user {Tag: $tag), ( t:tweet {Id: $id})
