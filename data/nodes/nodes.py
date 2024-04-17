@@ -15,20 +15,35 @@ unique_location_ids = set()
 def create_user_data():
     tag = fake.unique.user_name()
     
+    # Mantener la unicidad del tag
     while tag in unique_tags:
         tag = fake.unique.user_name()
         
     username = fake.user_name()
     description = fake.text(max_nb_chars=30)
-    birthday = fake.date_of_birth(minimum_age=18, maximum_age=85).isoformat()
-    joined_on = fake.date_this_decade().isoformat()
+
+    # Obtener y formatear la fecha de nacimiento
+    birthday_datetime = fake.date_of_birth(minimum_age=18, maximum_age=85)
+    birthday_date = birthday_datetime.strftime('%Y-%m-%d')
+    birthday_hour = birthday_datetime.strftime('%H:%M')
+
+    # Obtener y formatear la fecha de ingreso
+    joined_on_datetime = fake.date_this_decade()
+    joined_on_date = joined_on_datetime.strftime('%Y-%m-%d')
+    joined_on_hour = joined_on_datetime.strftime('%H:%M')
+
     is_profile_public = fake.boolean()
+    blue = fake.boolean()
+
     return {
         "Tag": tag,
         "Username": username,
+        "Blue": blue,
         "Description": description,
-        "Birthday": birthday,
-        "Joined_on": joined_on,
+        "Birthday_Date": birthday_date,
+        "Birthday_Hour": birthday_hour,
+        "Joined_on_Date": joined_on_date,
+        "Joined_on_Hour": joined_on_hour,
         "Is_profile_public": is_profile_public
     }
 
@@ -123,7 +138,7 @@ reactions_list = ['😀', '😂', '😍', '😢', '😠', '👍', '👎', '❤�
 # write USER data to a CSV file
 def write_users_to_csv(csv_file_name, node_count):
     with open(csv_file_name, mode='w', newline='', encoding='utf-8') as file:
-        writer = csv.DictWriter(file, fieldnames=["Tag", "Username", "Description", "Birthday", "Joined_on", "Is_profile_public"])
+        writer = csv.DictWriter(file, fieldnames=["Tag", "Username", "Blue", "Description", "Birthday_Date", "Birthday_Hour", "Joined_on_Date", "Joined_on_Hour", "Is_profile_public"])
         writer.writeheader()
         for _ in range(node_count):
             user_data = create_user_data()
