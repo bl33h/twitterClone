@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {birthday, calendar, location as locationSVG} from "../../assets/icons/icons";
+import {birthday, calendar, location as locationSVG, privateAccount, verified} from "../../assets/icons/icons";
 import "./profile.scss";
 
 import {UserContext} from "../../App";
@@ -48,30 +48,27 @@ function Profile() {
         fetch(`http://localhost:3001/profile/${tag}`)
             .then(res => res.json())
             .then(data => {
-                const birthdateString = `${data[0].birthdate.year.low}-${data[0].birthdate.month.low}-${data[0].birthdate.day.low}`;
-                const joinedOnString = `${data[0].joined_on.year.low}-${data[0].joined_on.month.low}-${data[0].joined_on.day.low}`;
-
-                data[0].birthdate = birthdateString;
-                data[0].joined_on = joinedOnString;
-
-                data[0].tweets = data[0].tweets.map(transformTweet);
-
+                data[0].birthday = `${data[0].birthdate.year.low}-${data[0].birthdate.month.low}-${data[0].birthdate.day.low}`;
+                data[0].joined_on = `${data[0].joined_on.year.low}-${data[0].joined_on.month.low}-${data[0].joined_on.day.low}`;
+                try {
+                    data[0].tweets = data[0].tweets.reverse();
+                    data[0].tweets = data[0].tweets.map(transformTweet);
+                } catch (e) {
+                    data[0].tweets = []
+                }
                 setProfile(data[0]);
-            });
+            }).catch(err => alert(err));
     }, [tag]);
 
     const [showForm, setShowForm] = useState(false);
     const [username, setUsername] = useState("");
     const [description, setDescription] = useState("");
-    const [birthdate, setBirthdate] = useState("");
     const [location, setLocation] = useState("");
     const [isPublic, setIsPublic] = useState(false);
 
     const handleEditProfileClick = () => {
         setUsername(profile.username);
         setDescription(profile.description);
-        const formattedBirthdate = new Date(profile.birthdate).toISOString().substring(0, 10);
-        setBirthdate(formattedBirthdate);
         setLocation(profile.located_in ? profile.located_in.location_name : '');
         setIsPublic(profile.is_profile_public);
 
@@ -83,21 +80,28 @@ function Profile() {
 
         const username = event.target.elements[0].value;
         const description = event.target.elements[1].value;
-        const birthdate = event.target.elements[2].value;
-        const location = event.target.elements[3].value;
-        const isPublic = event.target.elements[4].checked;
-
+        const location = event.target.elements[2].value;
+        const isPublic = event.target.elements[3].checked;
 
         const data = {
             tag,
             username,
             description,
-            birthdate,
             location,
             isPublic
         };
 
-        console.log(data);
+        fetch("http://localhost:3001/modify", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+            .then(data => {
+                console.log(data);
+                setShowForm(false);
+            }).catch(err => console.error(err));
     };
 
     return (
@@ -112,8 +116,6 @@ function Profile() {
                                onChange={e => setUsername(e.target.value)}/>
                         <textarea placeholder={"Description"} value={description}
                                   onChange={e => setDescription(e.target.value)}/>
-                        <input type={"date"} placeholder={"Birthdate"} value={birthdate}
-                               onChange={e => setBirthdate(e.target.value)}/>
                         <input type={"text"} placeholder={"Location"} value={location}
                                onChange={e => setLocation(e.target.value)}/>
                         <label>
@@ -127,6 +129,8 @@ function Profile() {
                     <div className={"names"}>
                         <span id={"username"}>{profile.username}</span>
                         <span id={"tag"}>@{profile.tag}</span>
+                        {profile.is_blue && verified}
+                        {profile.is_profile_public && privateAccount}
                     </div>
                     <br/>
                     <div className={"description"}>
@@ -139,7 +143,7 @@ function Profile() {
                             <span
                                 className={"move"}>{locationSVG} {profile.located_in ? profile.located_in.location_name : 'Location not provided'}</span>
                         </span>
-                            <span className={"move"}>{birthday} {profile.birthdate}</span>
+                            <span className={"move"}>{birthday} {profile.birthday}</span>
                         </div>
                         <div className={"joined"}>
                             {calendar} <span>{profile.joined_on}</span>

@@ -307,6 +307,7 @@ app.get('/', async (req, res) => {
       ON CREATE
         SET u.Username = $username,
             u.Description = $desc,
+            u.Is_profile_public = $is_public,
             locin.CurrentlyIn = true,
             locin.LivesThere = true,
             locin.LocationId = loc.Id,
@@ -315,6 +316,7 @@ app.get('/', async (req, res) => {
       ON MATCH
         SET u.Username = $username,
         u.Description = $desc,
+        u.Is_profile_public = $is_public,
         locin.CurrentlyIn = true,
         locin.LocationId = loc.Id,
         locin.UserTag = u.Tag
@@ -322,7 +324,7 @@ app.get('/', async (req, res) => {
 
       
       `,
-      { tag: data.tag, username: data.username, desc:data.description, location: data.location, timestamp: fecha}
+      { tag: data.tag, username: data.username, desc:data.description, location: data.location, timestamp: fecha, is_public: data.isPublic}
     );
 
     res.status(200).send('Respuesta exitosa');

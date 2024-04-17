@@ -2,8 +2,6 @@ import pfp from '../../assets/images/defaultPFP.jpg';
 import media from '../../assets/images/defaultMedia.png';
 import poll from '../../assets/images/defaultPoll.png';
 
-import {UserProvider} from "../../contexts/userProvider";
-
 import {
     analytics,
     likes,
@@ -27,25 +25,40 @@ function convertHashtagsAndMentionsToLinks(content) {
     return newContent;
 }
 
-function handleReply(tweetId) {
-    console.log(`Reply call for on tweet ${tweetId}`);
-}
-
-function handleRetweet(tweetId) {
-    console.log(`Retweet call for on tweet ${tweetId}`);
-}
-
-function handleLike(tweetId) {
-    console.log(`Like call for on tweet ${tweetId}`);
-}
-
 function handleAnalytics(tweetId) {
-    console.log(`Analytics call for on tweet ${tweetId}`);
+
+}
+
+function handleInteraction(tag, tweetId, type) {
+    fetch('http://localhost:3001/interactions', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({tag: tag, id: tweetId, type: type}),
+    })
+        .then(data => {
+            console.log('Success:', data);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
 }
 
 function handleDelete(tweetId) {
-    console.log(`Delete call for on tweet ${tweetId}`);
-
+    fetch('http://localhost:3001/deletet', {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({id: tweetId}),
+    })
+        .then(data => {
+            alert('Tweet deleted successfully!')
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
 }
 
 const Tweet = ({data}) => {
@@ -153,13 +166,13 @@ const Tweet = ({data}) => {
                     {has_poll && <img src={poll} alt="poll"/>}
                 </div>
                 <div className={"interactions"}>
-                    <button className={"replies"} onClick={() => handleReply(id)}>
+                    <button className={"replies"} onClick={() => handleInteraction(tag, id, 'REPLIES_TO')}>
                         {replies} <span>{replies_amount}</span>
                     </button>
-                    <button className={"retweets"} onClick={() => handleRetweet(id)}>
+                    <button className={"retweets"} onClick={() => handleInteraction(tag, id, 'RETWEETED')}>
                         {retweets} <span>{retweets_amount}</span>
                     </button>
-                    <button className={"likes"} onClick={() => handleLike(id)}>
+                    <button className={"likes"} onClick={() => handleInteraction(tag, id, 'LIKED')}>
                         {likes} <span>{likes_amount}</span>
                     </button>
                     <button className={"analytics"} onClick={() => handleAnalytics(id)}>
