@@ -35,7 +35,22 @@ function handleInteraction(tag, tweetId, type) {
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({tag: tag, id: tweetId, type: type}),
+        body: JSON.stringify({
+                // Needed for likes
+                tag: tag,
+                id: tweetId,
+                type: type,
+                os: navigator.platform ? navigator.platform : 'Unknown',
+                device: navigator.userAgent ? navigator.userAgent : 'Unknown',
+                // Needed for retweets
+                mentions: [],
+                has_media: false,
+                has_poll: false,
+                content: '',
+                // Needed for replies
+                hashtags: [],
+            }
+        ),
     })
         .then(data => {
             console.log('Success:', data);
@@ -47,14 +62,14 @@ function handleInteraction(tag, tweetId, type) {
 
 function handleDelete(tweetId) {
     fetch('http://localhost:3001/deletet', {
-        method: 'DELETE',
+        method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({id: tweetId}),
     })
         .then(data => {
-            alert('Tweet deleted successfully!')
+            alert(`Tweet ${tweetId} deleted`);
         })
         .catch((error) => {
             console.error('Error:', error);
