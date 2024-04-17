@@ -406,32 +406,36 @@ app.get('/', async (req, res) => {
   }); 
 
   app.post('/addReaction', async (req, res) => {
-    const { tag, messageId, reactionType } = req.body;
+    const { messageId, reaction } = req.body;
+    const session = driver.session();
     try {
       const result = await session.run(
         `
-        MATCH (u:user {Tag: $tag})
         MATCH (m:message {Id: $messageId})
-        MERGE (u)-[r:REACTED {Type: $reactionType}]->(m)
-        ON CREATE SET r.Timestamp = datetime()
-        RETURN r
+        SET m.reactions = CASE WHEN m.reactions IS NULL OR m.reactions = ''
+                               THEN $reaction
+                               ELSE reduce(s = m.reactions, r IN [m.reactions, $reaction] | s + CASE WHEN r IN split(s, ',') THEN '' ELSE ',' + r END)
+                               END
+        RETURN m.Id AS messageId, m.reactions AS updatedReactions
         `,
-        { tag, messageId, reactionType }
+        { messageId, reaction }
       );
   
       if (result.records.length === 0) {
-        res.status(404).send('Message or user not found.');
+        res.status(404).send('Message not found.');
       } else {
-        const reaction = result.records[0].get('r');
+        const updatedReactions = result.records[0].get('updatedReactions');
         res.status(200).send({
           message: 'Reaction added correctly.',
-          reactionType: reaction.properties.Type,
-          timestamp: reaction.properties.Timestamp
+          messageId: result.records[0].get('messageId'),
+          reactions: updatedReactions
         });
       }
     } catch (error) {
-      console.error('Error in the aura connection', error);
-      res.status(500).send('Error in processing the request.');
+      console.error('Error in the aura connection.', error);
+      res.status(500).send('Error processing the request.');
+    } finally {
+      await session.close();
     }
   });  
 
