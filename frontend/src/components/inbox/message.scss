@@ -1,0 +1,41 @@
+@import "../components.scss";
+
+.message {
+  display: flex;
+  flex-direction: column;
+
+  .bubble {
+    padding: 10px;
+    border: 1px solid $border-color;
+    max-width: 75%;
+    margin-bottom: 10px;
+    border-radius: 15px;
+    background-color: $background-color;
+
+    .message-user {
+      font-weight: 600;
+    }
+
+    &.user-message {
+      align-self: flex-end;
+      background-color: $accent-color;
+      color: white;
+      border-radius: 15px 15px 0 15px;
+    }
+  }
+
+  .message-reactions {
+    position: relative;
+    top: -10px;
+    display: flex;
+    align-items: center;
+    border: 1px solid $border-color;
+    border-radius: 15px;
+    padding: 5px;
+    width: fit-content;
+
+    &.user-message {
+      align-self: flex-end;
+    }
+  }
+}

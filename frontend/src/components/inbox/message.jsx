@@ -1,18 +1,20 @@
 import React from 'react';
-import './chat.scss';
+import './message.scss';
 
-function Message(data){
+function Message({isUserMessage, ...data}) {
     return (
-        <div className="message">
-            <div className="message-user">
-                {data.user.username}
+        <div className={"message"}>
+            <div className={`bubble ${isUserMessage ? 'user-message' : ''}`}>
+                <div className="message-user">
+                    {data.user.username}
+                </div>
+                <div className="message-content">
+                    {data.content}
+                </div>
             </div>
-            <div className="message-content">
-                {data.content}
-            </div>
-            <div className="message-reactions">
+            <div className={`message-reactions ${isUserMessage ? 'user-message' : ''}`}>
                 {data.reactions.map(reaction => (
-                    <span>{reaction}</span>
+                    <span className={"reaction"}>{reaction}</span>
                 ))}
             </div>
         </div>

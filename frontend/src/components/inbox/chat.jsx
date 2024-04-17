@@ -1,20 +1,20 @@
-import { useParams } from 'react-router-dom';
-import React, {useEffect, useState} from 'react';
+import {useParams} from 'react-router-dom';
+import React, {useState} from 'react';
 import './chat.scss';
 import {UserContext} from "../../App";
 import Message from "./message";
 import pfp from '../../assets/images/defaultPFP.jpg'
 
 function Chat() {
-    const { id } = useParams();
-    const { tag } = React.useContext(UserContext);
+    const {id} = useParams();
+    const {tag} = React.useContext(UserContext);
 
     const [messages, setMessages] = useState([
         {
             id: 1,
             user: {
                 id: 1,
-                username: 'Alice',
+                username: 'donald90',
             },
             content: 'Hello',
             reactions: ['🤣', '🫵', '🤔'],
@@ -26,7 +26,7 @@ function Chat() {
                 id: 2,
                 username: 'Bob',
             },
-            content: 'Hi Alice!',
+            content: 'Hi Donald!',
             reactions: ['👍', '🎉'],
             timestamp: 2
         },
@@ -34,7 +34,7 @@ function Chat() {
             id: 3,
             user: {
                 id: 1,
-                username: 'Alice',
+                username: 'donald90',
             },
             content: 'How are you?',
             reactions: ['🤔', '👍'],
@@ -54,7 +54,7 @@ function Chat() {
             id: 5,
             user: {
                 id: 1,
-                username: 'Alice',
+                username: 'donald90',
             },
             content: 'I am fine too. Thanks for asking!',
             reactions: ['👍', '😊'],
@@ -78,7 +78,7 @@ function Chat() {
             </div>
             <div className={"messages"}>
                 {messages.map(message => (
-                    <Message key={message.id} {...message}/>
+                    <Message key={message.id} {...message} isUserMessage={tag === message.user.username}/>
                 ))}
             </div>
         </div>

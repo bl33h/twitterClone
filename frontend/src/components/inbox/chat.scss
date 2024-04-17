@@ -39,4 +39,12 @@
         font-weight: 600;
     }
   }
+
+  .messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+  }
 }
