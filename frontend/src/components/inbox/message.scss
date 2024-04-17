@@ -3,6 +3,8 @@
 .message {
   display: flex;
   flex-direction: column;
+  flex: 1;
+  padding: 1rem;
 
   .bubble {
     padding: 10px;
