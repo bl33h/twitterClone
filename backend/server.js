@@ -245,7 +245,7 @@ app.get('/', async (req, res) => {
       SET locin.LivesThere = true
       SET locin.LocationId = loc.Id
       SET locin.UserTag = u.Tag
-      SET locin.TimeStamp = date: substring(toString(datetime({timezone: 'UTC'})), 0, 24)
+      SET locin.TimeStamp = substring(toString(datetime({timezone: 'UTC'})), 0, 24)
 
       
       `,
@@ -254,6 +254,21 @@ app.get('/', async (req, res) => {
 
     res.status(200).send('Respuesta exitosa');
   });
+
+  app.post('/modifyt', async (req, res) => {
+    const data = req.body;
+    const result = await session.run(
+      `
+      MATCH (t:tweet {Id: $id})
+      SET t.Content = $content
+      `,
+      { id: data.id, content: data.content}
+    );
+
+    res.status(200).send('Respuesta exitosa');
+  });
+
+
 
 
 app.listen(port, () => {
