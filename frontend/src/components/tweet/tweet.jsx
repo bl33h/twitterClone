@@ -7,7 +7,6 @@ import {UserProvider} from "../../contexts/userProvider";
 import {
     analytics,
     likes,
-    location as locationIcon,
     moreTweet,
     privateAccount,
     replies,
@@ -17,6 +16,8 @@ import {
     verified,
 } from "../../assets/icons/icons";
 import './tweet.scss';
+import React, {useState} from "react";
+import {UserContext} from "../../App";
 
 function convertHashtagsAndMentionsToLinks(content) {
     const hashtagRegex = /#(\w+)/g;
@@ -42,8 +43,13 @@ function handleAnalytics(tweetId) {
     console.log(`Analytics call for on tweet ${tweetId}`);
 }
 
+function handleDelete(tweetId) {
+    console.log(`Delete call for on tweet ${tweetId}`);
+
+}
+
 const Tweet = ({data}) => {
-    const currentUser = UserProvider.tag;
+    const tag = React.useContext(UserContext);
 
     const {
         id,
@@ -62,6 +68,33 @@ const Tweet = ({data}) => {
         replies_amount,
         location,
     } = data;
+
+    const handleFormSubmit = (event) => {
+        event.preventDefault();
+
+        const data = {
+            id: id,
+            content: editedContent,
+        };
+
+        console.log(data);
+    };
+
+    const [isMenuVisible, setIsMenuVisible] = useState(false);
+    const toggleMenu = () => {
+        setIsMenuVisible(!isMenuVisible);
+    };
+
+    const [isEditFormVisible, setIsEditFormVisible] = useState(false);
+    const [editedContent, setEditedContent] = useState(content);
+    const toggleEditForm = () => {
+        setIsEditFormVisible(!isEditFormVisible);
+    };
+
+    function handleEdit(tweetId) {
+        console.log(`Edit call for on tweet ${tweetId}`);
+        toggleEditForm();
+    }
 
     return (
         <div className="tweet">
@@ -84,7 +117,13 @@ const Tweet = ({data}) => {
                         </span>
                     </div>
                     <div className={"options"}>
-                        <button>{moreTweet}</button>
+                        <button onClick={toggleMenu}>{moreTweet}</button>
+                        {isMenuVisible && (
+                            <div className="menu">
+                                <button onClick={() => handleEdit(id)}>Edit</button>
+                                <button onClick={() => handleDelete(id)}>Delete</button>
+                            </div>
+                        )}
                     </div>
                 </div>
                 <div className={"tweet-content"}
@@ -111,6 +150,17 @@ const Tweet = ({data}) => {
                         <button>{share}</button>
                     </div>
                 </div>
+                {isEditFormVisible && (
+                    <div className="edit-form">
+                        <form onSubmit={handleFormSubmit}>
+                            <label>
+                                Content:
+                                <textarea value={editedContent} onChange={e => setEditedContent(e.target.value)}/>
+                            </label>
+                            <button type="submit">Save</button>
+                        </form>
+                    </div>
+                )}
             </div>
         </div>
     )
