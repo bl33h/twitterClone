@@ -182,6 +182,12 @@ app.get('/', async (req, res) => {
       rel.HasMedia AS has_media,
       rel.HasPoll AS has_poll,
       tweet.Content AS content,
+      tweet.Money_generated AS money_generated,
+      tweet.Impressions AS impressions,
+      tweet.Profile_visits AS profile_visits,
+      tweet.Engagements AS engagements,
+      tweet.New_followers AS new_followers,
+      tweet.Detail_expands AS detail_expands,
       COUNT(DISTINCT ans) AS replies_amount,
       COUNT(DISTINCT likes) AS likes_amount,
       COUNT(DISTINCT rts) AS retweets_amount
@@ -238,6 +244,12 @@ app.get('/', async (req, res) => {
             likes_amount: likes_amount,
             retweets_amount: retweets_amount,
             replies_amount: replies_amount
+            engagements: tweet.Engagements,
+            money_generated: tweet.Money_generated,
+            impressions: tweet.Impressions,
+            profile_visits: tweet.Profile_visits,
+            new_followers: tweet.New_followers,
+            detail_expands: tweet.Detail_expands
         }) AS all_tweets
         ORDER BY loc.TimeStamp DESC
         RETURN
