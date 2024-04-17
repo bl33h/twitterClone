@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const neo4j = require('neo4j-driver');
 const { v4: uuidv4 } = require('uuid');
+const moment = require('moment');
 require('dotenv').config();
 
 const app = express();
@@ -77,7 +78,9 @@ app.get('/', async (req, res) => {
       console.error('Error accessing Neo4j', error);
       res.status(500).send('Error accessing Neo4j');
     }
-  });  
+  });
+
+ 
 
   app.get('/chat/:tag', async (req, res) => {
     const tag = req.params.tag;
@@ -249,6 +252,20 @@ app.get('/', async (req, res) => {
 
     res.status(200).send('Respuesta exitosa');
   });
+
+  app.post('/test', async (req, res) => {
+    const data = req.body;
+    const uuidUnico = await generarUUIDUnico(session);
+    const fecha = moment().utc().format('YYYY-MM-DDTHH:mm:ssZ');
+    const result = await session.run(
+      `
+      CREATE (n:PRUEBAAAA {date:$date})
+      `,
+      { date: fecha }
+    );
+
+    res.status(200).send('Respuesta exitosa');
+  });
   
   app.post('/modify', async (req, res) => {
     const data = req.body;
@@ -290,6 +307,54 @@ app.get('/', async (req, res) => {
 
     res.status(200).send('Respuesta exitosa');
   });
+
+  app.post('/interactions', async (req, res) => {
+    const data = req.body;
+    if (data.type == "LIKED"){
+      const result = await session.run(
+        `
+        MATCH (u:user {Tag: $tag})
+        MATCH (t:tweet {Id: $id})
+        
+  
+        
+        `,
+        { tag: data.tag, id: data.id}
+      );
+    }
+    else if (data.type == "RETWEETED"){
+      const result = await session.run(
+        `
+        MATCH (u:user {Tag: $tag})-[rel:RETWEETED]->(t:tweet {Id: $id})
+  
+        
+        `,
+        { tag: data.tag, id: data.id}
+      );
+    }
+    else if (data.type == "REPLIES_TO"){
+      const result = await session.run(
+        `
+        MATCH (u:user {Tag: $tag})-[rel:REPLIES_TO]->(t:tweet {Id: $id})
+  
+        
+        `,
+        { tag: data.tag, id: data.id}
+      );
+    }
+
+    res.status(200).send('Respuesta exitosa');
+  });
+
+  app.post('/deletet', async (req, res) => {
+    const data = req.body;
+    try {
+      const result = await session.run('MATCH (t:tweet {Id: $id} DETACH DELETE t)', { id: data.id });
+      res.send(nodes);
+    } catch (error) {
+      res.status(200).send('Respuesta exitosa');
+    }
+  }); 
 
 
 app.listen(port, () => {
