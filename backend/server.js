@@ -434,9 +434,10 @@ app.get('/', async (req, res) => {
     CREATE (u)-[s:SENT {MessageId:$id, TimeStamp: datetime($timestamp), UserTag: $tag, Device: $device, OS: $os}]->(m)
     CREATE (c)-[r:IS_FROM {Order: 0, Read: false, Edited: false, MessageId: $id, ChatId:$chat}]->(m)
 
+    return s,r
       
     `, { id: id, chat: data.chat, tag: data.tag, timestamp: fecha, os: data.os, device: data.device});
-    res.send(nodes);
+    res.send(result1);
     res.status(200).send('Respuesta exitosa');
     
   }); 
