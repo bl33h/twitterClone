@@ -110,7 +110,6 @@ app.get('/', async (req, res) => {
         MATCH (c:chat {Id: $id})<-[rel:IS_FROM]-(m:message)
         MATCH (u:user)-[s:SENT]->(m)
         RETURN
-        RETURN
             m.Id as id,
             m.Content AS content,
             m.Reactions as reactions,
