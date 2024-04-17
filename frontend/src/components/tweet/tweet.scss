@@ -82,6 +82,32 @@
       }
 
       .options {
+        position: relative;
+
+        .menu {
+          position: absolute;
+          top: 100%;
+          left: 0;
+          background: lighten($background-color, 5%);
+          border-radius: 0.5em;
+
+          button{
+            display: block;
+            width: 100%;
+            padding: 0.5em;
+            text-align: left;
+            border: none;
+            background: none;
+            color: $text-color;
+            cursor: pointer;
+
+            &:hover {
+              background: transparentize($accent-color, 0.9);
+              border-radius: 0.5em;
+            }
+          }
+        }
+
         button {
           background: none;
           border: none;
@@ -131,7 +157,7 @@
       margin-top: 0.5em;
       cursor: pointer;
 
-      button{
+      button {
         background: none;
         border: none;
         padding: 0.5em;
