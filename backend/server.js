@@ -540,31 +540,37 @@ app.post('/follow', async (req, res) => {
     const {followerTag, followeeTag, isMuted, notificationsActive} = req.body;
     const session = driver.session();
     try {
-
+        const fecha = moment().utc().format('YYYY-MM-DDTHH:mm:ssZ');
         if (followerTag === followeeTag) {
             return res.status(400).send('The user is trying to follow themselves.');
         }
 
-        const result = await session.run(
+        const matchResult = await session.run(
             `
-        MATCH (follower:User {Tag: $followerTag}), (followee:User {Tag: $followeeTag})
-        MERGE (follower)-[r:FOLLOWS]->(followee)
-        ON CREATE SET r.FollowerTag = $followerTag, r.FollowedTag = $followeeTag, r.TimeStamp = datetime(), r.IsMuted = $isMuted, r.NotificationsActive = $notificationsActive
-        ON MATCH SET r.TimeStamp = datetime(), r.IsMuted = $isMuted, r.NotificationsActive = $notificationsActive
-        RETURN r
-        `,
-            {followerTag, followeeTag, isMuted, notificationsActive}
+            MATCH (follower:user {Tag: $followerTag}), (followee:user {Tag: $followeeTag})
+            RETURN follower, followee
+            `,
+            {followerTag, followeeTag}
         );
 
-        if (result.records.length === 0) {
-            res.status(404).send('No users found.');
-        } else {
-            const relationship = result.records[0].get('r').properties;
-            res.status(200).send({
-                message: 'Follow relationship created successfully.',
-                relationship: relationship
-            });
+
+        const mergeResult = await session.run(
+            `
+            MATCH (follower:user {Tag: $followerTag}), (followee:user {Tag: $followeeTag})
+            MERGE (follower)-[r:FOLLOWS]->(followee)
+            ON CREATE SET r.FollowerTag = $followerTag, r.FollowedTag = $followeeTag, r.TimeStamp = datetime($timestamp), r.IsMuted = $isMuted, r.NotificationsActive = $notificationsActive
+            ON MATCH SET r.TimeStamp = datetime($timestamp), r.IsMuted = $isMuted, r.NotificationsActive = $notificationsActive
+            RETURN r
+            `,
+            {followerTag, followeeTag, isMuted, notificationsActive, timestamp: fecha}
+        );
+
+        if (mergeResult.records.length === 0) {
+            return res.status(500).send('Error processing the request.');
         }
+
+        res.status(200).send('User followed successfully.');
+
     } catch (error) {
         console.error('Error in the Aura connection.', error);
         res.status(500).send('Error processing the request.');

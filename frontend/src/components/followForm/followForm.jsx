@@ -27,7 +27,12 @@ function FollowForm() {
                 }),
             })
                 .then(data => {
-                    alert(`Following ${to_follow}`);
+                    if (data.status === 200) {
+                        alert("Followed!")
+                    }
+                    else {
+                        alert("Failed to follow")
+                    }
                 })
                 .catch((error) => {
                     console.error('Error:', error);
