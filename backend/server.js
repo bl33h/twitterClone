@@ -143,8 +143,6 @@ app.get('/', async (req, res) => {
     }
   }); 
 
-
-
   app.get('/feed/:tag', async (req, res) => {
     const tag = req.params.tag;
     try {
@@ -405,6 +403,35 @@ app.get('/', async (req, res) => {
     }
   }); 
 
+  app.post('/addReaction', async (req, res) => {
+    const { tag, messageId, reactionType } = req.body;
+    try {
+      const result = await session.run(
+        `
+        MATCH (u:user {Tag: $tag})
+        MATCH (m:message {Id: $messageId})
+        MERGE (u)-[r:REACTED {Type: $reactionType}]->(m)
+        ON CREATE SET r.Timestamp = datetime()
+        RETURN r
+        `,
+        { tag, messageId, reactionType }
+      );
+  
+      if (result.records.length === 0) {
+        res.status(404).send('Message or user not found.');
+      } else {
+        const reaction = result.records[0].get('r');
+        res.status(200).send({
+          message: 'Reaction added correctly.',
+          reactionType: reaction.properties.Type,
+          timestamp: reaction.properties.Timestamp
+        });
+      }
+    } catch (error) {
+      console.error('Error in the aura connection', error);
+      res.status(500).send('Error in processing the request.');
+    }
+  });  
 
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
