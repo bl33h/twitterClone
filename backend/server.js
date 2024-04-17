@@ -423,9 +423,11 @@ app.get('/', async (req, res) => {
     const id = await generarUUIDUnicoMessage(session);
     try {
       const result = await session.run(`
+      MATCH (u:user {Tag: $tag})
+      MATCH (c:chat {Id: $chat})
       CREATE (m:message {Content: $content, Id: $id, Reactions: "", Mentions: $mentions})
-      CREATE (u:user {Tag: $tag})-[s:SENT {MessageId:$id, TimeStamp: datetime($timestamp), UserTag: $tag, Device: $device, OS: $os}]->(m)
-      CREATE (c:chat {Id: $chat})-[r:IS_FROM {Order: 0, Read: false, Edited: false, MessageId: $id, ChatId:chat}]->(m)
+      CREATE (u)-[s:SENT {MessageId:$id, TimeStamp: datetime($timestamp), UserTag: $tag, Device: $device, OS: $os}]->(m)
+      CREATE (c)-[r:IS_FROM {Order: 0, Read: false, Edited: false, MessageId: $id, ChatId:chat}]->(m)
 
       
       `, { id: id, content: data.content, mentions: data.mentions, chat: data.chat, tag: data.tag, timestamp: fecha, os: data.os, device: data.device});
