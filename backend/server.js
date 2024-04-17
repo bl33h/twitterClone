@@ -223,14 +223,37 @@ app.get('/', async (req, res) => {
       `
       MATCH (u:user {Tag: $tag})
       CREATE (t:tweet {Money_generated: 0, Impressions: 0, Profile_visits: 0, Content: $content, Hashtags: $hashtags, Id: $id, Detail_expands:0, Engagements: 0, New_followers: 0})
-      CREATE (u)-[:TWEETED {Mentions:$mentions, HasMedia: $has_media, TweetId: $id, HasPoll: $has_poll, UserTag: $tag, TimeStamp:$timestamp}]->(t)
+      CREATE (u)-[:TWEETED {Mentions:$mentions, HasMedia: $has_media, TweetId: $id, HasPoll: $has_poll, UserTag: $tag, TimeStamp: substring(toString(datetime({timezone: 'UTC'})), 0, 24)}]->(t)
       `,
-      { tag: data.tag, content: data.content, hashtags: data.hashtags, id: uuidUnico, has_media: data.has_media, has_poll: data.has_poll, timestamp: Date.now(), mentions: data.mentions }
+      { tag: data.tag, content: data.content, hashtags: data.hashtags, id: uuidUnico, has_media: data.has_media, has_poll: data.has_poll,  mentions: data.mentions }
     );
 
     res.status(200).send('Respuesta exitosa');
   });
   
+  app.post('/modify', async (req, res) => {
+    const data = req.body;
+    const result = await session.run(
+      `
+      MATCH (u:user {Tag: $tag})
+      MATCH (loc:location {Name: $location})
+      MATCH (u)-[locin:LOCATED_IN]->(loc)
+      SET u.Username = $username
+      SET u.Description = $desc
+      SET u.Birthday = $birthday
+      SET locin.CurrentlyIn = true
+      SET locin.LivesThere = true
+      SET locin.LocationId = loc.Id
+      SET locin.UserTag = u.Tag
+      SET locin.TimeStamp = date: substring(toString(datetime({timezone: 'UTC'})), 0, 24)
+
+      
+      `,
+      { tag: data.tag, username: data.username, desc:data.description, birthday: data.birthday, location: data.location}
+    );
+
+    res.status(200).send('Respuesta exitosa');
+  });
 
 
 app.listen(port, () => {
