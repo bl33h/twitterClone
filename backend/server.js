@@ -79,6 +79,23 @@ app.get('/', async (req, res) => {
     }
   });  
 
+  app.get('/chat/:tag', async (req, res) => {
+    const tag = req.params.tag;
+    try {
+      const result = await session.run('MATCH (n:user {Tag: $tag})-[:PARTICIPATES_IN]-[c:chat] RETURN c', { tag: tag });
+      const nodes = result.records.map(record => {
+        return {
+          tag: record.get('n').properties.Name
+        };
+      });
+      console.log("Formatted nodes sent to frontend:", nodes);
+      res.send(nodes);
+    } catch (error) {
+      console.error('Error accessing Neo4j', error);
+      res.status(500).send('Error accessing Neo4j');
+    }
+  }); 
+
   app.get('/feed/:tag', async (req, res) => {
     const tag = req.params.tag;
     try {
@@ -271,6 +288,8 @@ app.get('/', async (req, res) => {
 
     res.status(200).send('Respuesta exitosa');
   });
+
+
 
 
 
