@@ -446,6 +446,43 @@ app.get('/', async (req, res) => {
     } finally {
       await session.close();
     }
+  });
+
+  app.post('/follow', async (req, res) => {
+    const { followerTag, followeeTag, isMuted, notificationsActive } = req.body;
+    const session = driver.session();
+    try {
+
+      if (followerTag === followeeTag) {
+        return res.status(400).send('The user is trying to follow themselves.');
+      }
+  
+      const result = await session.run(
+        `
+        MATCH (follower:User {Tag: $followerTag}), (followee:User {Tag: $followeeTag})
+        MERGE (follower)-[r:FOLLOWS]->(followee)
+        ON CREATE SET r.FollowerTag = $followerTag, r.FollowedTag = $followeeTag, r.TimeStamp = datetime(), r.IsMuted = $isMuted, r.NotificationsActive = $notificationsActive
+        ON MATCH SET r.TimeStamp = datetime(), r.IsMuted = $isMuted, r.NotificationsActive = $notificationsActive
+        RETURN r
+        `,
+        { followerTag, followeeTag, isMuted, notificationsActive }
+      );
+  
+      if (result.records.length === 0) {
+        res.status(404).send('No users found.');
+      } else {
+        const relationship = result.records[0].get('r').properties;
+        res.status(200).send({
+          message: 'Follow relationship created successfully.',
+          relationship: relationship
+        });
+      }
+    } catch (error) {
+      console.error('Error in the Aura connection.', error);
+      res.status(500).send('Error processing the request.');
+    } finally {
+      await session.close();
+    }
   });  
 
 app.listen(port, () => {
