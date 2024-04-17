@@ -25,7 +25,26 @@ async function generarUUIDUnico(session) {
 
   while (tweetExistente) {
     const resultado = await session.run(
-      'MATCH (tweet:Tweet {id: $uuid}) RETURN tweet',
+      'MATCH (tweet:tweet {id: $uuid}) RETURN tweet',
+      { uuid: uuidUnico }
+    );
+    if (resultado.records.length === 0) {
+      tweetExistente = false;
+    } else {
+      uuidUnico = uuidv4();
+    }
+  }
+
+  return uuidUnico;
+}
+
+async function generarUUIDUnicoMessage(session) {
+  let uuidUnico = uuidv4();
+  let tweetExistente = true;
+
+  while (tweetExistente) {
+    const resultado = await session.run(
+      'MATCH (me:message {id: $uuid}) RETURN me',
       { uuid: uuidUnico }
     );
     if (resultado.records.length === 0) {
@@ -356,7 +375,8 @@ app.get('/', async (req, res) => {
         `
         MATCH (u:user {Tag: $tag})
         MATCH (t:tweet {Id: $id})
-        
+        MERGE (u)-[rel:LIKED]->(t)
+        ON CREATE SET rel.TimeStamp = datetime()
   
         
         `,
@@ -400,13 +420,15 @@ app.get('/', async (req, res) => {
   app.post('/newmessage', async (req, res) => {
     const data = req.body;
     const fecha = moment().utc().format('YYYY-MM-DDTHH:mm:ssZ');
+    const id = await generarUUIDUnicoMessage(session);
     try {
       const result = await session.run(`
       CREATE (m:message {Content: $content, Id: $id, Reactiosn: "", Mentions: $mentions})
-      CREATE (u:user {Tag: $tag})-[s:SENT {TimeStamp: datetime($timestamp)}]->(m)
+      CREATE (u:user {Tag: $tag})-[s:SENT {MessageId:$id, TimeStamp: datetime($timestamp), UserTag: $tag, Device: $device, OS: $os}]->(m)
+      CREATE (c:chat {Id: $chat})-[r:IS_FROM {Order: 0, Read: false, Edited: false, MessageId: $id, ChatId:chat}]->(m)
 
       
-      `, { id: data.id, content: data.content, mentions: data.mentions, chat: data.chat, tag: data.tag, timestamp: fecha });
+      `, { id: id, content: data.content, mentions: data.mentions, chat: data.chat, tag: data.tag, timestamp: fecha, os: data.os, device: data.device});
       res.send(nodes);
     } catch (error) {
       res.status(200).send('Respuesta exitosa');
