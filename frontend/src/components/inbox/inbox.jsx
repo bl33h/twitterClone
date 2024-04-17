@@ -1,9 +1,11 @@
 import './inbox.scss';
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import {config, newMessage} from "../../assets/icons/icons";
 import Tray from "./tray";
+import {UserContext} from "../../App";
 
 function Inbox() {
+    const {tag} = React.useContext(UserContext);
     const [messages, setMessages] = useState([
             {
                 name: "John Doe",
@@ -22,6 +24,17 @@ function Inbox() {
             },
         ],
     );
+
+    // Fetch messaages
+    useEffect(() => {
+        fetch(`http://localhost:3001/chat/${tag}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+            }).catch(err => {
+            console.log(err);
+        })
+    }, []);
 
     return (
         <div className={"messages"}>
