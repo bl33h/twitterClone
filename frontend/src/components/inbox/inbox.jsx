@@ -6,31 +6,14 @@ import {UserContext} from "../../App";
 
 function Inbox() {
     const {tag} = React.useContext(UserContext);
-    const [messages, setMessages] = useState([
-            {
-                name: "John Doe",
-                username: "johndoe",
-                time: "1h",
-            },
-            {
-                name: "Jane Doe",
-                username: "janedoe",
-                time: "2h",
-            },
-            {
-                name: "James Doe",
-                username: "jamesdoe",
-                time: "3h",
-            },
-        ],
-    );
+    const [messages, setMessages] = useState([]);
 
     // Fetch messaages
     useEffect(() => {
         fetch(`http://localhost:3001/chat/${tag}`)
             .then(response => response.json())
             .then(data => {
-                console.log(data);
+                setMessages(data);
             }).catch(err => {
             console.log(err);
         })
@@ -50,7 +33,7 @@ function Inbox() {
             </div>
             <div className={"tray-container"}>
                 {messages.map((message, index) => (
-                    <Tray key={index} name={message.name} username={message.username} time={message.time}/>
+                    <Tray key={index} data={message}/>
                 ))}
             </div>
         </div>

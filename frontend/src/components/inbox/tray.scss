@@ -31,12 +31,18 @@
       margin-bottom: 1rem;
       margin-left: 0.5em;
 
-      #name{
+      #name {
         font-weight: 600;
         margin-right: 0.5em;
       }
-      #username {
-        color: lighten($border-color, 20%);
+
+      #muted, #dm {
+        svg {
+          width: 20px;
+          height: 20px;
+          fill: $text-color;
+
+        }
       }
     }
   }

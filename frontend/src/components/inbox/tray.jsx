@@ -1,12 +1,16 @@
 import React from 'react'
 import './tray.scss'
 import pfp from '../../assets/images/defaultPFP.jpg'
+import {dmSVG, mutedSVG} from "../../assets/icons/icons";
 
-function Tray (data) {
+function Tray({data}) {
     const {
         name,
-        username,
+        isdm,
+        muted,
     } = data
+
+    console.log(data)
 
     return (
         <div className="tray">
@@ -16,7 +20,8 @@ function Tray (data) {
             <div className={"info"}>
                 <div className={"header"}>
                     <span id={"name"}>{data.name}</span>
-                    <span id={"username"}>@{data.username}</span>
+                    {isdm && <span id={"dm"}>{dmSVG}</span>}
+                    {muted && <span id={"muted"}>{mutedSVG}</span>}
                 </div>
             </div>
         </div>
