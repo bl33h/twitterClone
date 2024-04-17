@@ -469,7 +469,7 @@ app.post('/interactions', async (req, res) => {
               const createResult = await session.run(
                   `
                   MATCH (u:user {Tag: $tag}), ( t:tweet {Id: $id})
-                  MERGE (u)-[rel:REPLIES_TO]->(t)
+                  MERGE (t)-[rel:REPLIES_TO]->(t)
                   ON CREATE SET rel.timeStamp = datetime($timestamp)
               `,
                   { timestamp: fecha, tag: data.tag, id: data.id}
