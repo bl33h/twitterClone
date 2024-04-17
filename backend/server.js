@@ -421,20 +421,24 @@ app.get('/', async (req, res) => {
     const data = req.body;
     const fecha = moment().utc().format('YYYY-MM-DDTHH:mm:ssZ');
     const id = await generarUUIDUnicoMessage(session);
-    try {
-      const result = await session.run(`
-      MATCH (u:user {Tag: $tag})
-      MATCH (c:chat {Id: $chat})
-      CREATE (m:message {Content: $content, Id: $id, Reactions: "", Mentions: $mentions})
-      CREATE (u)-[s:SENT {MessageId:$id, TimeStamp: datetime($timestamp), UserTag: $tag, Device: $device, OS: $os}]->(m)
-      CREATE (c)-[r:IS_FROM {Order: 0, Read: false, Edited: false, MessageId: $id, ChatId:chat}]->(m)
+    const result = await session.run(`
+    CREATE (m:message {Content: $content, Id: $id, Reactions: "", Mentions: $mentions})
 
       
-      `, { id: id, content: data.content, mentions: data.mentions, chat: data.chat, tag: data.tag, timestamp: fecha, os: data.os, device: data.device});
-      res.send(nodes);
-    } catch (error) {
-      res.status(200).send('Respuesta exitosa');
-    }
+    `, { id: id, content: data.content, mentions: data.mentions, });
+
+    const result1 = await session.run(`
+    MATCH (c:chat {Id: $chat})
+    MATCH (u:user {Tag: $tag})
+    MATCH (m:message {Id: $id})
+    CREATE (u)-[s:SENT {MessageId:$id, TimeStamp: datetime($timestamp), UserTag: $tag, Device: $device, OS: $os}]->(m)
+    CREATE (c)-[r:IS_FROM {Order: 0, Read: false, Edited: false, MessageId: $id, ChatId:$chat}]->(m)
+
+      
+    `, { id: id, chat: data.chat, tag: data.tag, timestamp: fecha, os: data.os, device: data.device});
+    res.send(nodes);
+    res.status(200).send('Respuesta exitosa');
+    
   }); 
 
   app.post('/addReaction', async (req, res) => {
