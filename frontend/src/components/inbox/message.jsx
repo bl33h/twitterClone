@@ -3,7 +3,7 @@ import './message.scss';
 
 function Message({isUserMessage, ...data}) {
     const [reactions, setReactions] = useState(data.reactions);
-    const emojis = ['😀', '😃', '😄', '😁', '😆', '😅', '😂', '🤣', '😊', '😇'];
+    const emojis =  ['😀', '😂', '😍', '😢', '😠', '👍', '👎', '❤️', '🔥', '🤔']
 
     const addRandomReaction = () => {
         const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
