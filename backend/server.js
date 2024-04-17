@@ -458,23 +458,23 @@ app.post('/interactions', async (req, res) => {
             );
         }
     }  else if (data.type === "REPLIES_TO") {
-        const result = await session.run(
+        const deleteResult = await session.run(
             `
-        MATCH (u:user {Tag: $tag), ( t:tweet {Id: $id})
-        MERGE (u)-[rel:REPLIES_TO]->(t)
-        ON CREATE SET rel.TimeStamp = datetime($timestamp)
-                      rel.Mentions = $mentions,
-                      rel.HasMedia = $has_media,
-                      rel.HasPoll = $has_poll,
-                      rel.Content = $content,
-                      rel.TweetId = $id,
-                      rel.UserTag = $tag
-        ON MATCH DELETE rel
-  
-        
-        `,
-            {tag: data.tag, id: data.id}
-        );
+            MATCH (u:user {Tag: $tag})-[rel:REPLIES_TO]->(t:tweet {Id: $id})
+            DELETE rel
+            `,
+                { tag: data.tag, id: data.id }
+            );
+            if (deleteResult.summary.counters.updates().relationshipsDeleted === 0) {
+              const createResult = await session.run(
+                  `
+                  MATCH (u:user {Tag: $tag}), ( t:tweet {Id: $id})
+                  MERGE (u)-[rel:REPLIES_TO]->(t)
+                  ON CREATE SET rel.timeStamp = datetime($timestamp)
+              `,
+                  { timestamp: fecha, tag: data.tag, id: data.id}
+              );
+          }
     }
 
     res.status(200).send('Respuesta exitosa');
