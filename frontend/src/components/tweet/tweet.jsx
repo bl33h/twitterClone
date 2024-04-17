@@ -77,7 +77,21 @@ const Tweet = ({data}) => {
             content: editedContent,
         };
 
-        console.log(data);
+        // Make POST API call
+        fetch('http://localhost:3001/modifyt', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+            .then(data => {
+                console.log('Success:', data);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+
     };
 
     const [isMenuVisible, setIsMenuVisible] = useState(false);
@@ -92,7 +106,6 @@ const Tweet = ({data}) => {
     };
 
     function handleEdit(tweetId) {
-        console.log(`Edit call for on tweet ${tweetId}`);
         toggleEditForm();
     }
 
