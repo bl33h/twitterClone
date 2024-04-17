@@ -110,8 +110,9 @@ app.get('/', async (req, res) => {
         MATCH (c:chat {Id: $id})<-[rel:IS_FROM]-(m:message)
         MATCH (u:user)-[s:SENT]->(m)
         RETURN
+            m.Id as id,
             m.Content AS content,
-            m.Reactiosn as reactions,
+            m.Reactions as reactions,
             m.Mentions as mentions,
             s.TimeStamp AS timestamp,
             u.Tag AS tag,
@@ -124,6 +125,7 @@ app.get('/', async (req, res) => {
         , { id: id });
       const nodes = result.records.map(record => {
         return {
+          id: record.get('id'),
           content: record.get('content'),
           reactions: record.get('reactions'),
           mentions: record.get('mentions'),
@@ -395,10 +397,16 @@ app.get('/', async (req, res) => {
     }
   }); 
 
-  app.post('/deletet', async (req, res) => {
+  app.post('/newmessage', async (req, res) => {
     const data = req.body;
+    const fecha = moment().utc().format('YYYY-MM-DDTHH:mm:ssZ');
     try {
-      const result = await session.run('MATCH (t:tweet {Id: $id} DETACH DELETE t)', { id: data.id });
+      const result = await session.run(`
+      CREATE (m:message {Content: $content, Id: $id, Reactiosn: "", Mentions: $mentions})
+      CREATE (u:user {Tag: $tag})-[s:SENT {TimeStamp: datetime($timestamp)}]->(m)
+
+      
+      `, { id: data.id, content: data.content, mentions: data.mentions, chat: data.chat, tag: data.tag, timestamp: fecha });
       res.send(nodes);
     } catch (error) {
       res.status(200).send('Respuesta exitosa');

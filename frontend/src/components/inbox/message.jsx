@@ -1,13 +1,37 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import './message.scss';
+import {UserContext} from "../../App";
 
 function Message({isUserMessage, ...data}) {
-    const [reactions, setReactions] = useState(data.reactions);
-    const emojis =  ['😀', '😂', '😍', '😢', '😠', '👍', '👎', '❤️', '🔥', '🤔']
+    const {tag} = React.useContext(UserContext);
+    const [reactions, setReactions] = useState(() => {
+        return data.reactions.split(',');
+    });
+    const emojis = ['😀', '😂', '😍', '😢', '😠', '👍', '👎', '❤️', '🔥', '🤔']
 
     const addRandomReaction = () => {
         const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
         setReactions([...reactions, randomEmoji]);
+
+        console.log({
+            messageId: data.id,
+            tag: tag,
+            reactionType: randomEmoji
+        })
+
+        fetch('http://localhost:3001/addReaction', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                messageId: data.id,
+                tag: tag,
+                reactionType: randomEmoji
+            })
+        }).then(r => r.json()).then(data => {
+            console.log(data);
+        });
     };
 
     const groupedReactions = reactions.reduce((grouped, reaction) => {
@@ -19,7 +43,7 @@ function Message({isUserMessage, ...data}) {
         <div className={"message"} onClick={addRandomReaction}>
             <div className={`bubble ${isUserMessage ? 'user-message' : ''}`}>
                 <div className="message-user">
-                    {data.user.username}
+                    {data.username}
                 </div>
                 <div className="message-content">
                     {data.content}
