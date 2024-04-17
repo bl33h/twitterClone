@@ -460,7 +460,8 @@ app.post('/interactions', async (req, res) => {
     }  else if (data.type === "REPLIES_TO") {
         const deleteResult = await session.run(
             `
-            MATCH (u:user {Tag: $tag})-[rel:REPLIES_TO]->(t:tweet {Id: $id})
+            MATCH (t:tweet {Id:$id})
+            MATCH (t)-[rel:REPLIES_TO]->(t)
             DELETE rel
             `,
                 { tag: data.tag, id: data.id }
@@ -468,7 +469,7 @@ app.post('/interactions', async (req, res) => {
             if (deleteResult.summary.counters.updates().relationshipsDeleted === 0) {
               const createResult = await session.run(
                   `
-                  MATCH (u:user {Tag: $tag}), ( t:tweet {Id: $id})
+                  MATCH ( t:tweet {Id: $id})
                   MERGE (t)-[rel:REPLIES_TO]->(t)
                   ON CREATE SET rel.timeStamp = datetime($timestamp)
               `,
