@@ -85,7 +85,9 @@ app.get('/', async (req, res) => {
       const result = await session.run('MATCH (n:user {Tag: $tag})-[:PARTICIPATES_IN]->(c:chat) RETURN c', { tag: tag });
       const nodes = result.records.map(record => {
         return {
-          name: record.get('c').properties.Name
+          name: record.get('c').properties.Name,
+          isdm: record.get('c').properties.IsdM,
+          muted: record.get('c').properties.MutedMentions
         };
       });
       console.log("Formatted nodes sent to frontend:", nodes);
