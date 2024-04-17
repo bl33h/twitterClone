@@ -16,7 +16,7 @@ function Message({isUserMessage, ...data}) {
         console.log({
             messageId: data.id,
             tag: tag,
-            reactionType: randomEmoji
+            reaction: randomEmoji
         })
 
         fetch('http://localhost:3001/addReaction', {
@@ -27,7 +27,7 @@ function Message({isUserMessage, ...data}) {
             body: JSON.stringify({
                 messageId: data.id,
                 tag: tag,
-                reactionType: randomEmoji
+                reaction: randomEmoji
             })
         }).then(r => r.json()).then(data => {
             console.log(data);

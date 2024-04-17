@@ -24,7 +24,7 @@ function Chat() {
             <div className={"header"}>
                 <button onClick={() => window.location.href = '/'}>&larr;</button>
                 <img src={pfp} alt={"User avatar"}/>
-                <span id={"username"}>Username</span>
+                <span id={"username"}>{}</span>
             </div>
             <div className={"messages"}>
                 {messages.map(message => (
