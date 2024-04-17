@@ -307,19 +307,20 @@ app.get('/', async (req, res) => {
       MATCH (loc:location {Name: $location})
       MERGE (u)-[locin:LOCATED_IN]->(loc)
       ON CREATE
-        SET u.Username = $username
-        SET u.Description = $desc
-        SET locin.CurrentlyIn = true
-        SET locin.LivesThere = true
-        SET locin.LocationId = loc.Id
-        SET locin.UserTag = u.Tag
-        SET locin.TimeStamp = datetime($timestamp)
+        SET u.Username = $username,
+            u.Description = $desc,
+            locin.CurrentlyIn = true,
+            locin.LivesThere = true,
+            locin.LocationId = loc.Id,
+            locin.UserTag = u.Tag,
+            locin.TimeStamp = datetime($timestamp)
       ON MATCH
-        SET u.Username = $username
-        SET u.Description = $desc
-        SET locin.CurrentlyIn = true
-        SET locin.LocationId = loc.Id
-        SET locin.UserTag = u.Tag
+        SET u.Username = $username,
+        u.Description = $desc,
+        locin.CurrentlyIn = true,
+        locin.LocationId = loc.Id,
+        locin.UserTag = u.Tag
+
 
       
       `,
@@ -383,6 +384,16 @@ app.get('/', async (req, res) => {
 
     res.status(200).send('Respuesta exitosa');
   });
+
+  app.post('/deletet', async (req, res) => {
+    const data = req.body;
+    try {
+      const result = await session.run('MATCH (t:tweet {Id: $id} DETACH DELETE t)', { id: data.id });
+      res.send(nodes);
+    } catch (error) {
+      res.status(200).send('Respuesta exitosa');
+    }
+  }); 
 
   app.post('/deletet', async (req, res) => {
     const data = req.body;
