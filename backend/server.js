@@ -423,7 +423,7 @@ app.get('/', async (req, res) => {
     const id = await generarUUIDUnicoMessage(session);
     try {
       const result = await session.run(`
-      CREATE (m:message {Content: $content, Id: $id, Reactiosn: "", Mentions: $mentions})
+      CREATE (m:message {Content: $content, Id: $id, Reactions: "", Mentions: $mentions})
       CREATE (u:user {Tag: $tag})-[s:SENT {MessageId:$id, TimeStamp: datetime($timestamp), UserTag: $tag, Device: $device, OS: $os}]->(m)
       CREATE (c:chat {Id: $chat})-[r:IS_FROM {Order: 0, Read: false, Edited: false, MessageId: $id, ChatId:chat}]->(m)
 
