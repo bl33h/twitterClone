@@ -9,6 +9,7 @@ import Inbox from "./components/inbox/inbox";
 import SessionForm from "./components/sessionForm/sessionForm";
 import {UserProvider} from "./contexts/userProvider";
 import Chat from "./components/inbox/chat";
+import FollowForm from "./components/followForm/followForm";
 
 export const UserContext = React.createContext(null);
 
@@ -30,7 +31,7 @@ function App() {
                             <Route path={"/chat/:id"} element={<Chat />} />
                         </Routes>
                     </div>
-                    <div className={"right-pane"}><SessionForm/></div>
+                    <div className={"right-pane"}><SessionForm/><FollowForm/></div>
                 </div>
             </BrowserRouter>
         </UserProvider>

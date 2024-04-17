@@ -26,6 +26,22 @@ function convertHashtagsAndMentionsToLinks(content) {
 }
 
 function handleInteraction(tag, tweetId, type) {
+    console.log({
+        // Needed for likes
+        tag: tag,
+        id: tweetId,
+        type: type,
+        os: 'Unknown',
+        device: 'Unknown',
+        // Needed for retweets
+        mentions: [],
+        has_media: false,
+        has_poll: false,
+        content: '',
+        // Needed for replies
+        hashtags: [],
+    })
+
     fetch('http://localhost:3001/interactions', {
         method: 'POST',
         headers: {
@@ -36,8 +52,8 @@ function handleInteraction(tag, tweetId, type) {
                 tag: tag,
                 id: tweetId,
                 type: type,
-                os: navigator.platform ? navigator.platform : 'Unknown',
-                device: navigator.userAgent ? navigator.userAgent : 'Unknown',
+                os: 'Unknown',
+                device: 'Unknown',
                 // Needed for retweets
                 mentions: [],
                 has_media: false,
@@ -73,9 +89,9 @@ function handleDelete(tweetId) {
 }
 
 const Tweet = ({data}) => {
-    const tag = React.useContext(UserContext);
+    const {tag} = React.useContext(UserContext);
 
-    const {
+    let {
         id,
         user: {
             at,
@@ -190,13 +206,22 @@ const Tweet = ({data}) => {
                     {has_poll && <img src={poll} alt="poll"/>}
                 </div>
                 <div className={"interactions"}>
-                    <button className={"replies"} onClick={() => handleInteraction(tag, id, 'REPLIES_TO')}>
+                    <button className={"replies"} onClick={() => {
+                        replies_amount = replies_amount + 1;
+                        handleInteraction(tag, id, 'REPLIES_TO');
+                    }}>
                         {replies} <span>{replies_amount}</span>
                     </button>
-                    <button className={"retweets"} onClick={() => handleInteraction(tag, id, 'RETWEETED')}>
+                    <button className={"retweets"} onClick={() => {
+                        retweets_amount = retweets_amount + 1;
+                        handleInteraction(tag, id, 'RETWEETED');
+                    }}>
                         {retweets} <span>{retweets_amount}</span>
                     </button>
-                    <button className={"likes"} onClick={() => handleInteraction(tag, id, 'LIKED')}>
+                    <button className={"likes"} onClick={() => {
+                        likes_amount = likes_amount + 1;
+                        handleInteraction(tag, id, 'LIKED');
+                    }}>
                         {likes} <span>{likes_amount}</span>
                     </button>
                     <button className={"analytics"} onClick={() => handleAnalytics(id)}>

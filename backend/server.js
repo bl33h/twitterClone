@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const neo4j = require('neo4j-driver');
-const { v4: uuidv4 } = require('uuid');
+const {v4: uuidv4} = require('uuid');
 const moment = require('moment');
 require('dotenv').config();
 
@@ -20,112 +20,111 @@ const driver = neo4j.driver(uri, neo4j.auth.basic(user, password));
 const session = driver.session();
 
 async function generarUUIDUnico(session) {
-  let uuidUnico = uuidv4();
-  let tweetExistente = true;
+    let uuidUnico = uuidv4();
+    let tweetExistente = true;
 
-  while (tweetExistente) {
-    const resultado = await session.run(
-      'MATCH (tweet:tweet {id: $uuid}) RETURN tweet',
-      { uuid: uuidUnico }
-    );
-    if (resultado.records.length === 0) {
-      tweetExistente = false;
-    } else {
-      uuidUnico = uuidv4();
+    while (tweetExistente) {
+        const resultado = await session.run(
+            'MATCH (tweet:tweet {id: $uuid}) RETURN tweet',
+            {uuid: uuidUnico}
+        );
+        if (resultado.records.length === 0) {
+            tweetExistente = false;
+        } else {
+            uuidUnico = uuidv4();
+        }
     }
-  }
 
-  return uuidUnico;
+    return uuidUnico;
 }
 
 async function generarUUIDUnicoMessage(session) {
-  let uuidUnico = uuidv4();
-  let tweetExistente = true;
+    let uuidUnico = uuidv4();
+    let tweetExistente = true;
 
-  while (tweetExistente) {
-    const resultado = await session.run(
-      'MATCH (me:message {id: $uuid}) RETURN me',
-      { uuid: uuidUnico }
-    );
-    if (resultado.records.length === 0) {
-      tweetExistente = false;
-    } else {
-      uuidUnico = uuidv4();
+    while (tweetExistente) {
+        const resultado = await session.run(
+            'MATCH (me:message {id: $uuid}) RETURN me',
+            {uuid: uuidUnico}
+        );
+        if (resultado.records.length === 0) {
+            tweetExistente = false;
+        } else {
+            uuidUnico = uuidv4();
+        }
     }
-  }
 
-  return uuidUnico;
+    return uuidUnico;
 }
 
 app.get('/', async (req, res) => {
     try {
-      const result = await session.run('MATCH (n:Person) RETURN n LIMIT 10');
-      const nodes = result.records.map(record => {
-        const node = record.get('n');
-        const age = node.properties.age ? node.properties.age.low : undefined;
-        return {
-          // convert identity to a simple number
-          id: node.identity.low,  
-          labels: node.labels,
-          properties: {
-            name: node.properties.name,
-            age: age  
-          }
-        };
-      });
-      console.log("Formatted nodes sent to frontend:", nodes);
-      res.send(nodes);
+        const result = await session.run('MATCH (n:Person) RETURN n LIMIT 10');
+        const nodes = result.records.map(record => {
+            const node = record.get('n');
+            const age = node.properties.age ? node.properties.age.low : undefined;
+            return {
+                // convert identity to a simple number
+                id: node.identity.low,
+                labels: node.labels,
+                properties: {
+                    name: node.properties.name,
+                    age: age
+                }
+            };
+        });
+        console.log("Formatted nodes sent to frontend:", nodes);
+        res.send(nodes);
     } catch (error) {
-      console.error('Error accessing Neo4j', error);
-      res.status(500).send('Error accessing Neo4j');
+        console.error('Error accessing Neo4j', error);
+        res.status(500).send('Error accessing Neo4j');
     }
-  }); 
-  
-  app.get('/login/:tag', async (req, res) => {
+});
+
+app.get('/login/:tag', async (req, res) => {
     const tag = req.params.tag;
     try {
-      const result = await session.run('MATCH (n:user {Tag: $tag}) RETURN n', { tag: tag });
-      const nodes = result.records.map(record => {
-        return {
-          tag: record.get('n').properties.Tag,
-          username: record.get('n').properties.Username
-        };
-      });
-      console.log("Formatted nodes sent to frontend:", nodes);
-      res.send(nodes);
+        const result = await session.run('MATCH (n:user {Tag: $tag}) RETURN n', {tag: tag});
+        const nodes = result.records.map(record => {
+            return {
+                tag: record.get('n').properties.Tag,
+                username: record.get('n').properties.Username
+            };
+        });
+        console.log("Formatted nodes sent to frontend:", nodes);
+        res.send(nodes);
     } catch (error) {
-      console.error('Error accessing Neo4j', error);
-      res.status(500).send('Error accessing Neo4j');
+        console.error('Error accessing Neo4j', error);
+        res.status(500).send('Error accessing Neo4j');
     }
-  });
+});
 
- 
 
-  app.get('/chat/:tag', async (req, res) => {
+app.get('/chat/:tag', async (req, res) => {
     const tag = req.params.tag;
     try {
-      const result = await session.run('MATCH (n:user {Tag: $tag})-[rel:PARTICIPATES_IN]->(c:chat) RETURN c.Id as id, c.Name as name, c.Is_dm as dm, rel.MutedMentions as muted', { tag: tag });
-      const nodes = result.records.map(record => {
-        return {
-          id: record.get('id'),
-          name: record.get('name'),
-          isdm: record.get('dm'),
-          muted: record.get('muted')
-        };
-      });
-      console.log("Formatted nodes sent to frontend:", nodes);
-      res.send(nodes);
+        const result = await session.run('MATCH (n:user {Tag: $tag})-[rel:PARTICIPATES_IN]->(c:chat) RETURN c.Id as id, c.Name as name, c.Is_dm as dm, rel.MutedMentions as muted', {tag: tag});
+        const nodes = result.records.map(record => {
+            return {
+                id: record.get('id'),
+                name: record.get('name'),
+                isdm: record.get('dm'),
+                muted: record.get('muted')
+            };
+        });
+        console.log("Formatted nodes sent to frontend:", nodes);
+        res.send(nodes);
     } catch (error) {
-      console.error('Error accessing Neo4j', error);
-      res.status(500).send('Error accessing Neo4j');
+        console.error('Error accessing Neo4j', error);
+        res.status(500).send('Error accessing Neo4j');
     }
-  }); 
+});
 
-  app.get('/messages/:chat', async (req, res) => {
+app.get('/messages/:chat', async (req, res) => {
     const id = req.params.chat;
     try {
-      const result = await session.run(
-        `
+        const result = await session.run(
+            `
         MATCH (c:chat {Id: $id})<-[rel:IS_FROM]-(m:message)
         MATCH (u:user)-[s:SENT]->(m)
         RETURN
@@ -141,34 +140,34 @@ app.get('/', async (req, res) => {
             rel.Edited as edited
 
         `
-        , { id: id });
-      const nodes = result.records.map(record => {
-        return {
-          id: record.get('id'),
-          content: record.get('content'),
-          reactions: record.get('reactions'),
-          mentions: record.get('mentions'),
-          timestamp: record.get('timestamp').low,
-          tag: record.get('tag'),
-          username: record.get('username'),
-          order: record.get('order'),
-          read: record.get('read'),
-          edited: record.get('edited')
-        };
-      });
-      console.log("Formatted nodes sent to frontend:", nodes);
-      res.send(nodes);
+            , {id: id});
+        const nodes = result.records.map(record => {
+            return {
+                id: record.get('id'),
+                content: record.get('content'),
+                reactions: record.get('reactions'),
+                mentions: record.get('mentions'),
+                timestamp: record.get('timestamp').low,
+                tag: record.get('tag'),
+                username: record.get('username'),
+                order: record.get('order'),
+                read: record.get('read'),
+                edited: record.get('edited')
+            };
+        });
+        console.log("Formatted nodes sent to frontend:", nodes);
+        res.send(nodes);
     } catch (error) {
-      console.error('Error accessing Neo4j', error);
-      res.status(500).send('Error accessing Neo4j');
+        console.error('Error accessing Neo4j', error);
+        res.status(500).send('Error accessing Neo4j');
     }
-  }); 
+});
 
-  app.get('/feed/:tag', async (req, res) => {
+app.get('/feed/:tag', async (req, res) => {
     const tag = req.params.tag;
     try {
-      const result = await session.run(
-      `
+        const result = await session.run(
+            `
       MATCH (u:user {Tag: $tag})
       OPTIONAL MATCH (u)-[:FOLLOWS]->(following:user)
       OPTIONAL MATCH (following)-[rel:TWEETED]->(tweet:tweet)
@@ -192,46 +191,46 @@ app.get('/', async (req, res) => {
       COUNT(DISTINCT likes) AS likes_amount,
       COUNT(DISTINCT rts) AS retweets_amount
       `
-      , { tag: tag });
-      const nodes = result.records.map(record => {
-        const user = record.get('user');
-        return {
-          id: record.get('id'),
-          user: {
-            tag: user.properties.Tag,
-            username: user.properties.Username,
-            is_profile_public: user.properties.Is_profile_public,
-            is_blue: record.get('is_blue')
-          },
-          timestamp: record.get('timestamp'),
-          has_media: record.get('has_media'),
-          has_poll: record.get('has_poll'),
-          content: record.get('content'),
-          replies_amount: record.get('replies_amount').low,
-          likes_amount: record.get('likes_amount').low,
-          retweets_amount: record.get('retweets_amount').low,
-          engagements: record.get('engagements').low,
-          money_generated: record.get('money_generated'),
-          impressions: record.get('impressions').low,
-          profile_visits: record.get('profile_visits').low,
-          new_followers: record.get('new_followers').low,
-          detail_expands: record.get('detail_expands').low
-        };
-      
-      });
-      console.log("Formatted nodes sent to frontend:", nodes);
-      res.send(nodes);
+            , {tag: tag});
+        const nodes = result.records.map(record => {
+            const user = record.get('user');
+            return {
+                id: record.get('id'),
+                user: {
+                    tag: user.properties.Tag,
+                    username: user.properties.Username,
+                    is_profile_public: user.properties.Is_profile_public,
+                    is_blue: record.get('is_blue')
+                },
+                timestamp: record.get('timestamp'),
+                has_media: record.get('has_media'),
+                has_poll: record.get('has_poll'),
+                content: record.get('content'),
+                replies_amount: record.get('replies_amount').low,
+                likes_amount: record.get('likes_amount').low,
+                retweets_amount: record.get('retweets_amount').low,
+                engagements: record.get('engagements').low,
+                money_generated: record.get('money_generated'),
+                impressions: record.get('impressions').low,
+                profile_visits: record.get('profile_visits').low,
+                new_followers: record.get('new_followers').low,
+                detail_expands: record.get('detail_expands').low
+            };
+
+        });
+        console.log("Formatted nodes sent to frontend:", nodes);
+        res.send(nodes);
     } catch (error) {
-      console.error('Error accessing Neo4j', error);
-      res.status(500).send('Error accessing Neo4j');
+        console.error('Error accessing Neo4j', error);
+        res.status(500).send('Error accessing Neo4j');
     }
-  });  
-  
-  app.get('/profile/:tag', async (req, res) => {
+});
+
+app.get('/profile/:tag', async (req, res) => {
     const tag = req.params.tag;
     try {
-      const result = await session.run(
-        `
+        const result = await session.run(
+            `
         MATCH (u:user {Tag: $tag})
         MATCH (u)-[loc:LOCATED_IN]->(location:location)
         OPTIONAL MATCH (u)-[t:TWEETED]->(tweet:tweet)
@@ -276,76 +275,85 @@ app.get('/', async (req, res) => {
             COUNT(DISTINCT follower) AS followers_amount,
             COLLECT(DISTINCT all_tweets) as tweets
         `,
-        { tag: tag }
-      );
-      const user = result.records.map(record => {
-        // Mapear los resultados a un objeto JavaScript
-        return {
-          tag: record.get('tag'),
-          username: record.get('username'),
-          description: record.get('description'),
-          birthdate: record.get('birthdate'),
-          joined_on: record.get('joined_on'),
-          is_profile_public: record.get('is_profile_public'),
-          located_in: record.get('located_in'),
-          following_amount: record.get('following_amount').low,
-          followers_amount: record.get('followers_amount').low,
-          tweets: record.get('tweets').map(tweet => {
+            {tag: tag}
+        );
+        const user = result.records.map(record => {
+            // Mapear los resultados a un objeto JavaScript
             return {
-              id: tweet[0].id,
-              user: { 
-                tag: tag,
-                username: record.get('username'), 
+                tag: record.get('tag'),
+                username: record.get('username'),
+                description: record.get('description'),
+                birthdate: record.get('birthdate'),
+                joined_on: record.get('joined_on'),
                 is_profile_public: record.get('is_profile_public'),
-                is_blue: record.get('is_blue')
-              },
-              timestamp: tweet[0].timestamp,
-              has_media: tweet[0].has_media,
-              has_poll: tweet[0].has_poll,
-              content: tweet[0].content,
-              likes_amount: tweet[0].likes_amount.low,
-              retweets_amount: tweet[0].retweets_amount.low,
-              replies_amount: tweet[0].replies_amount.low,
-              engagements: tweet[0].engagements.low,
-              money_generated: tweet[0].money_generated,
-              impressions: tweet[0].impressions.low,
-              profile_visits: tweet[0].profile_visits.low,
-              new_followers: tweet[0].new_followers.low,
-              detail_expands: tweet[0].detail_expands.low
+                located_in: record.get('located_in'),
+                following_amount: record.get('following_amount').low,
+                followers_amount: record.get('followers_amount').low,
+                tweets: record.get('tweets').map(tweet => {
+                    return {
+                        id: tweet[0].id,
+                        user: {
+                            tag: tag,
+                            username: record.get('username'),
+                            is_profile_public: record.get('is_profile_public'),
+                            is_blue: record.get('is_blue')
+                        },
+                        timestamp: tweet[0].timestamp,
+                        has_media: tweet[0].has_media,
+                        has_poll: tweet[0].has_poll,
+                        content: tweet[0].content,
+                        likes_amount: tweet[0].likes_amount.low,
+                        retweets_amount: tweet[0].retweets_amount.low,
+                        replies_amount: tweet[0].replies_amount.low,
+                        engagements: tweet[0].engagements.low,
+                        money_generated: tweet[0].money_generated,
+                        impressions: tweet[0].impressions.low,
+                        profile_visits: tweet[0].profile_visits.low,
+                        new_followers: tweet[0].new_followers.low,
+                        detail_expands: tweet[0].detail_expands.low
+                    };
+                })
             };
-          })
-        };
-      });
-      console.log("Formatted nodes sent to frontend:", user);
-      res.send(user);
+        });
+        console.log("Formatted nodes sent to frontend:", user);
+        res.send(user);
     } catch (error) {
-      console.error('Error accessing Neo4j', error);
-      res.status(500).send('Error accessing Neo4j');
+        console.error('Error accessing Neo4j', error);
+        res.status(500).send('Error accessing Neo4j');
     }
-  }); 
+});
 
 
-  app.post('/new', async (req, res) => {
+app.post('/new', async (req, res) => {
     const data = req.body;
     const uuidUnico = await generarUUIDUnico(session);
     const fecha = moment().utc().format('YYYY-MM-DDTHH:mm:ssZ');
     const result = await session.run(
-      `
+        `
       MATCH (u:user {Tag: $tag})
       CREATE (t:tweet {Money_generated: 0, Impressions: 0, Profile_visits: 0, Content: $content, Hashtags: $hashtags, Id: $id, Detail_expands:0, Engagements: 0, New_followers: 0})
       CREATE (u)-[:TWEETED {Mentions:$mentions, HasMedia: $has_media, TweetId: $id, HasPoll: $has_poll, UserTag: $tag, TimeStamp: datetime($timestamp)}]->(t)
       `,
-      { tag: data.tag, content: data.content, hashtags: data.hashtags, id: uuidUnico, has_media: data.has_media, has_poll: data.has_poll,  mentions: data.mentions, timestamp: fecha }
+        {
+            tag: data.tag,
+            content: data.content,
+            hashtags: data.hashtags,
+            id: uuidUnico,
+            has_media: data.has_media,
+            has_poll: data.has_poll,
+            mentions: data.mentions,
+            timestamp: fecha
+        }
     );
 
     res.status(200).send('Respuesta exitosa');
-  });
+});
 
-  app.post('/modify', async (req, res) => {
+app.post('/modify', async (req, res) => {
     const data = req.body;
     const fecha = moment().utc().format('YYYY-MM-DDTHH:mm:ssZ');
     const result = await session.run(
-      `
+        `
       MATCH (u:user {Tag: $tag}), (loc:location {Name: $location})
       MERGE (u)-[locin:LOCATED_IN]->(loc)
       ON CREATE
@@ -368,16 +376,23 @@ app.get('/', async (req, res) => {
 
       
       `,
-      { tag: data.tag, username: data.username, desc:data.description, location: data.location, timestamp: fecha, is_public: data.isPublic}
+        {
+            tag: data.tag,
+            username: data.username,
+            desc: data.description,
+            location: data.location,
+            timestamp: fecha,
+            is_public: data.isPublic
+        }
     );
 
     res.status(200).send('Respuesta exitosa');
-  });
+});
 
-  app.post('/modifyt', async (req, res) => {
+app.post('/modifyt', async (req, res) => {
     const data = req.body;
     const result = await session.run(
-      `
+        `
       MATCH (t:tweet {Id: $id})
       MATCH (t)<-[rel:TWEETED]-(:user)
 
@@ -385,34 +400,42 @@ app.get('/', async (req, res) => {
       SET t.HasMedia = $has_media
       SET t.HasPoll = $has_poll
       `,
-      { id: data.id, content: data.content, has_media: data.has_media, has_poll: data.has_poll}
+        {id: data.id, content: data.content, has_media: data.has_media, has_poll: data.has_poll}
     );
 
     res.status(200).send('Respuesta exitosa');
-  });
+});
 
-  app.post('/interactions', async (req, res) => {
+app.post('/interactions', async (req, res) => {
     const data = req.body;
     const fecha = moment().utc().format('YYYY-MM-DDTHH:mm:ssZ');
-    if (data.type == "LIKED"){
-      const result = await session.run(
-        `
-        MATCH (u:user {Tag: $tag}), ( t:tweet {Id: $id})
-        MERGE (u)-[rel:LIKED]->(t)
-        ON CREATE SET rel.TimeStamp = datetime($timestamp),
-                      rel.OS = $os,
-                      rel.Device = $device,
-                      rel.TweetId = $id,
-                      rel.UserTag = $tag
-        ON MATCH
-              IF EXISTS(rel) THEN DELETE rel
+    if (data.type === "LIKED") {
+        const deleteResult = await session.run(
+            `
+        MATCH (u:user {Tag: $tag})-[rel:LIKED]->(t:tweet {Id: $id})
+        DELETE rel
         `,
-        { tag: data.tag, id: data.id, timestamp: fecha}
-      );
-    }
-    else if (data.type == "RETWEETED"){
-      const result = await session.run(
-        `
+            { tag: data.tag, id: data.id }
+        );
+
+        // If no relationship was deleted, create the relationship
+        if (deleteResult.summary.counters.updates().relationshipsDeleted === 0) {
+            const createResult = await session.run(
+                `
+            MATCH (u:user {Tag: $tag}), (t:tweet {Id: $id})
+            MERGE (u)-[rel:LIKED]->(t)
+            ON CREATE SET rel.TimeStamp = datetime($timestamp),
+                          rel.OS = $os,
+                          rel.Device = $device,
+                          rel.TweetId = $id,
+                          rel.UserTag = $tag
+            `,
+                { tag: data.tag, id: data.id, timestamp: fecha, os: data.os, device: data.device }
+            );
+        }
+    } else if (data.type === "RETWEETED") {
+        const result = await session.run(
+            `
         MATCH (u:user {Tag: $tag}), ( t:tweet {Id: $id})
         MERGE (u)-[rel:RETWEETED]->(t)
         ON CREATE SET rel.TimeStamp = datetime($timestamp)
@@ -425,12 +448,11 @@ app.get('/', async (req, res) => {
         ON MATCH 
               IF EXISTS(rel) THEN DELETE rel
         `,
-        { tag: data.tag, id: data.id}
-      );
-    }
-    else if (data.type == "REPLIES_TO"){
-      const result = await session.run(
-        `
+            {tag: data.tag, id: data.id}
+        );
+    } else if (data.type === "REPLIES_TO") {
+        const result = await session.run(
+            `
         MATCH (u:user {Tag: $tag), ( t:tweet {Id: $id})
         MERGE (u)-[rel:REPLIES_TO]->(t)
         ON CREATE SET rel.TimeStamp = datetime($timestamp)
@@ -444,22 +466,22 @@ app.get('/', async (req, res) => {
   
         
         `,
-        { tag: data.tag, id: data.id}
-      );
+            {tag: data.tag, id: data.id}
+        );
     }
 
     res.status(200).send('Respuesta exitosa');
-  });
+});
 
-  app.post('/deletet', async (req, res) => {
+app.post('/deletet', async (req, res) => {
     const data = req.body;
     const result = await session.run(
-        'MATCH (t:tweet {Id: $id}) DETACH DELETE t', { id: data.id });
-      
-    res.status(200).send('Respuesta exitosa');
-  }); 
+        'MATCH (t:tweet {Id: $id}) DETACH DELETE t', {id: data.id});
 
-  app.post('/newmessage', async (req, res) => {
+    res.status(200).send('Respuesta exitosa');
+});
+
+app.post('/newmessage', async (req, res) => {
     const data = req.body;
     const fecha = moment().utc().format('YYYY-MM-DDTHH:mm:ssZ');
     const id = await generarUUIDUnicoMessage(session);
@@ -467,7 +489,7 @@ app.get('/', async (req, res) => {
     CREATE (m:message {Content: $content, Id: $id, Reactions: "", Mentions: $mentions})
 
       
-    `, { id: id, content: data.content, mentions: data.mentions, });
+    `, {id: id, content: data.content, mentions: data.mentions,});
 
     const result1 = await session.run(`
     MATCH (c:chat {Id: $chat}), ( u:user {Tag: $tag}), ( m:message {Id: $id})
@@ -476,17 +498,17 @@ app.get('/', async (req, res) => {
 
     return s,r
       
-    `, { id: id, chat: data.chat, tag: data.tag, timestamp: fecha, os: data.os, device: data.device});
+    `, {id: id, chat: data.chat, tag: data.tag, timestamp: fecha, os: data.os, device: data.device});
     res.status(200).send('Respuesta exitosa');
-    
-  }); 
 
-  app.post('/addReaction', async (req, res) => {
-    const { messageId, reaction } = req.body;
+});
+
+app.post('/addReaction', async (req, res) => {
+    const {messageId, reaction} = req.body;
     const session = driver.session();
     try {
-      const result = await session.run(
-        `
+        const result = await session.run(
+            `
         MATCH (m:message {Id: $messageId})
         SET m.Reactions = CASE 
                            WHEN m.Reactions IS NULL OR m.Reactions = '' 
@@ -495,68 +517,64 @@ app.get('/', async (req, res) => {
                            END
         RETURN m.Id AS messageId, m.Reactions AS updatedReactions
         `,
-        { messageId, reaction }
-      );  
-  
-      if (result.records.length === 0) {
-        res.status(404).send('Message not found');
-      } else {
-        const updatedReactions = result.records[0].get('updatedReactions');
-        res.status(200).send({
-          message: 'Reaction added successfully',
-          messageId: result.records[0].get('messageId'),
-          reactions: updatedReactions
-        });
-      }
-    } catch (error) {
-      console.error('Error in the Aura connection.', error);
-      res.status(500).send('Error processing the request');
-    } finally {
-      await session.close();
-    }
-  });
+            {messageId, reaction}
+        );
 
-  app.post('/follow', async (req, res) => {
-    const { followerTag, followeeTag, isMuted, notificationsActive } = req.body;
+        if (result.records.length === 0) {
+            res.status(404).send('Message not found');
+        } else {
+            const updatedReactions = result.records[0].get('updatedReactions');
+            res.status(200).send({
+                message: 'Reaction added successfully',
+                messageId: result.records[0].get('messageId'),
+                reactions: updatedReactions
+            });
+        }
+    } catch (error) {
+        console.error('Error in the Aura connection.', error);
+        res.status(500).send('Error processing the request');
+    }
+});
+
+app.post('/follow', async (req, res) => {
+    const {followerTag, followeeTag, isMuted, notificationsActive} = req.body;
     const session = driver.session();
     try {
 
-      if (followerTag === followeeTag) {
-        return res.status(400).send('The user is trying to follow themselves.');
-      }
-  
-      const result = await session.run(
-        `
+        if (followerTag === followeeTag) {
+            return res.status(400).send('The user is trying to follow themselves.');
+        }
+
+        const result = await session.run(
+            `
         MATCH (follower:User {Tag: $followerTag}), (followee:User {Tag: $followeeTag})
         MERGE (follower)-[r:FOLLOWS]->(followee)
         ON CREATE SET r.FollowerTag = $followerTag, r.FollowedTag = $followeeTag, r.TimeStamp = datetime(), r.IsMuted = $isMuted, r.NotificationsActive = $notificationsActive
         ON MATCH SET r.TimeStamp = datetime(), r.IsMuted = $isMuted, r.NotificationsActive = $notificationsActive
         RETURN r
         `,
-        { followerTag, followeeTag, isMuted, notificationsActive }
-      );
-  
-      if (result.records.length === 0) {
-        res.status(404).send('No users found.');
-      } else {
-        const relationship = result.records[0].get('r').properties;
-        res.status(200).send({
-          message: 'Follow relationship created successfully.',
-          relationship: relationship
-        });
-      }
+            {followerTag, followeeTag, isMuted, notificationsActive}
+        );
+
+        if (result.records.length === 0) {
+            res.status(404).send('No users found.');
+        } else {
+            const relationship = result.records[0].get('r').properties;
+            res.status(200).send({
+                message: 'Follow relationship created successfully.',
+                relationship: relationship
+            });
+        }
     } catch (error) {
-      console.error('Error in the Aura connection.', error);
-      res.status(500).send('Error processing the request.');
-    } finally {
-      await session.close();
+        console.error('Error in the Aura connection.', error);
+        res.status(500).send('Error processing the request.');
     }
-  });  
+});
 
 app.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}`);
+    console.log(`Server running on http://localhost:${port}`);
 });
 
 process.on('exit', () => {
-  driver.close();
+    driver.close();
 });
