@@ -82,12 +82,12 @@ app.get('/', async (req, res) => {
   app.get('/chat/:tag', async (req, res) => {
     const tag = req.params.tag;
     try {
-      const result = await session.run('MATCH (n:user {Tag: $tag})-[:PARTICIPATES_IN]->(c:chat) RETURN c', { tag: tag });
+      const result = await session.run('MATCH (n:user {Tag: $tag})-[rel:PARTICIPATES_IN]->(c:chat) RETURN c.Name as name, c.Is_dm as dm, rel.MutedMentions as muted', { tag: tag });
       const nodes = result.records.map(record => {
         return {
-          name: record.get('c').properties.Name,
-          isdm: record.get('c').properties.IsdM,
-          muted: record.get('c').properties.MutedMentions
+          name: record.get('name'),
+          isdm: record.get('dm'),
+          muted: record.get('muted')
         };
       });
       console.log("Formatted nodes sent to frontend:", nodes);
