@@ -253,20 +253,6 @@ app.get('/', async (req, res) => {
     res.status(200).send('Respuesta exitosa');
   });
 
-  app.post('/test', async (req, res) => {
-    const data = req.body;
-    const uuidUnico = await generarUUIDUnico(session);
-    const fecha = moment().utc().format('YYYY-MM-DDTHH:mm:ssZ');
-    const result = await session.run(
-      `
-      CREATE (n:PRUEBAAAA {date:$date})
-      `,
-      { date: fecha }
-    );
-
-    res.status(200).send('Respuesta exitosa');
-  });
-  
   app.post('/modify', async (req, res) => {
     const data = req.body;
     const result = await session.run(
