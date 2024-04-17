@@ -1,9 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './message.scss';
 
 function Message({isUserMessage, ...data}) {
+    const [reactions, setReactions] = useState(data.reactions);
+    const emojis = ['😀', '😃', '😄', '😁', '😆', '😅', '😂', '🤣', '😊', '😇'];
+
+    const addRandomReaction = () => {
+        const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
+        setReactions([...reactions, randomEmoji]);
+    };
+
+    const groupedReactions = reactions.reduce((grouped, reaction) => {
+        grouped[reaction] = (grouped[reaction] || 0) + 1;
+        return grouped;
+    }, {});
+
     return (
-        <div className={"message"}>
+        <div className={"message"} onClick={addRandomReaction}>
             <div className={`bubble ${isUserMessage ? 'user-message' : ''}`}>
                 <div className="message-user">
                     {data.user.username}
@@ -13,8 +26,8 @@ function Message({isUserMessage, ...data}) {
                 </div>
             </div>
             <div className={`message-reactions ${isUserMessage ? 'user-message' : ''}`}>
-                {data.reactions.map(reaction => (
-                    <span className={"reaction"}>{reaction}</span>
+                {Object.entries(groupedReactions).map(([reaction, count]) => (
+                    <span className={"reaction"}>{reaction} {count}</span>
                 ))}
             </div>
         </div>
