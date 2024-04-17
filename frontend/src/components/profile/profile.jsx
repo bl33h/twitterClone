@@ -48,8 +48,8 @@ function Profile() {
         fetch(`http://localhost:3001/profile/${tag}`)
             .then(res => res.json())
             .then(data => {
-                data[0].birthday = `${data[0].birthdate.year.low}-${data[0].birthdate.month.low}-${data[0].birthdate.day.low}`;
-                data[0].joined_on = `${data[0].joined_on.year.low}-${data[0].joined_on.month.low}-${data[0].joined_on.day.low}`;
+                data[0].birthday = data[0].birthday ? `${data[0].birthdate.year.low}-${data[0].birthdate.month.low}-${data[0].birthdate.day.low}` : 'Not provided';
+                data[0].joined_on = data[0].joined_on ? `${data[0].joined_on.year.low}-${data[0].joined_on.month.low}-${data[0].joined_on.day.low}` : 'Not provided';
                 try {
                     data[0].tweets = data[0].tweets.reverse();
                     data[0].tweets = data[0].tweets.map(transformTweet);
