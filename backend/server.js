@@ -277,7 +277,7 @@ app.get('/', async (req, res) => {
     const result = await session.run(
       `
       MATCH (t:tweet {Id: $id})
-      MATCH (t)-[rel:TWEETED]->(:user)
+      MATCH (t)<-[rel:TWEETED]-(:user)
 
       SET t.Content = $content
       SET t.HasMedia = $has_media
@@ -288,10 +288,6 @@ app.get('/', async (req, res) => {
 
     res.status(200).send('Respuesta exitosa');
   });
-
-
-
-
 
 
 app.listen(port, () => {
