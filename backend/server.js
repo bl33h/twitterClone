@@ -85,9 +85,10 @@ app.get('/', async (req, res) => {
   app.get('/chat/:tag', async (req, res) => {
     const tag = req.params.tag;
     try {
-      const result = await session.run('MATCH (n:user {Tag: $tag})-[rel:PARTICIPATES_IN]->(c:chat) RETURN c.Name as name, c.Is_dm as dm, rel.MutedMentions as muted', { tag: tag });
+      const result = await session.run('MATCH (n:user {Tag: $tag})-[rel:PARTICIPATES_IN]->(c:chat) RETURN c.Id as id, c.Name as name, c.Is_dm as dm, rel.MutedMentions as muted', { tag: tag });
       const nodes = result.records.map(record => {
         return {
+          id: record.get('id'),
           name: record.get('name'),
           isdm: record.get('dm'),
           muted: record.get('muted')
@@ -100,6 +101,49 @@ app.get('/', async (req, res) => {
       res.status(500).send('Error accessing Neo4j');
     }
   }); 
+
+  app.get('/messages/:chat', async (req, res) => {
+    const id = req.params.chat;
+    try {
+      const result = await session.run(
+        `
+        MATCH (c:chat {Id: $id})<-[rel:IS_FROM]-(m:message)
+        MATCH (u:user)-[s:SENT]->(m)
+        RETURN
+            m.Content AS content,
+            m.Reactiosn as reactions,
+            m.Mentions as mentions,
+            s.TimeStamp AS timestamp,
+            u.Tag AS tag,
+            u.Username AS username,
+            rel.Order AS order,
+            rel.Read AS read,
+            rel.Edited as edited
+
+        `
+        , { id: id });
+      const nodes = result.records.map(record => {
+        return {
+          content: record.get('content'),
+          reactions: record.get('reactions'),
+          mentions: record.get('mentions'),
+          timestamp: record.get('timestamp').low,
+          tag: record.get('tag'),
+          username: record.get('username'),
+          order: record.get('order'),
+          read: record.get('read'),
+          edited: record.get('edited')
+        };
+      });
+      console.log("Formatted nodes sent to frontend:", nodes);
+      res.send(nodes);
+    } catch (error) {
+      console.error('Error accessing Neo4j', error);
+      res.status(500).send('Error accessing Neo4j');
+    }
+  }); 
+
+
 
   app.get('/feed/:tag', async (req, res) => {
     const tag = req.params.tag;
