@@ -17,7 +17,8 @@ $like-color: #e0245e;
 
 .route-content {
   grid-column: 2;
-
+  background: $background-color;
+  border: 1px solid #38444d;
 }
 
 .right-pane {

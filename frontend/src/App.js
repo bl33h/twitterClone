@@ -8,6 +8,7 @@ import Profile from "./components/profile/profile";
 import Inbox from "./components/inbox/inbox";
 import SessionForm from "./components/sessionForm/sessionForm";
 import {UserProvider} from "./contexts/userProvider";
+import Chat from "./components/inbox/chat";
 
 export const UserContext = React.createContext(null);
 
@@ -26,6 +27,7 @@ function App() {
                             <Route path={"/bookmarks"} element={"Bookmarks"}/>
                             <Route path={"/lists"} element={"Lists"}/>
                             <Route path={"/profile"} element={<Profile/>}/>
+                            <Route path={"/chat/:id"} element={<Chat />} />
                         </Routes>
                     </div>
                     <div className={"right-pane"}><SessionForm/></div>
