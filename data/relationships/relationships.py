@@ -1,4 +1,3 @@
-from datetime import datetime
 from faker import Faker
 import random
 import csv
@@ -57,14 +56,9 @@ def generate_located_in_data(user_tags, location_ids, num_relationships):
 def generate_tweets_relationships(user_tags, tweet_ids, num_tweets):
     tweeted = []
     retweeted = []
-    random.shuffle(user_tags)
-
-    tweet_count = min(num_tweets, len(tweet_ids))
     
-    for i in range(tweet_count):
-        user_index = i % len(user_tags)
-        user_tag = user_tags[user_index]
-        tweet_id = tweet_ids[i]
+    for tweet_id in tweet_ids[:num_tweets]:
+        user_tag = random.choice(user_tags)
 
         # --- TWEETED relationship ---
         has_media = str(random.choice([True, False]))
@@ -111,9 +105,9 @@ def generate_replies_data(user_tags, tweet_ids, num_replies):
         user_tag = random.choice(user_tags)
         tweet_id = random.choice(tweet_ids)
         reply_to_tweet_id = random.choice(tweet_ids)
-        timestamp = datetime.fromisoformat(fake.date_this_decade().isoformat())
+        timestamp = fake.date_this_decade().isoformat()
 
-        replies_data.append([user_tag, tweet_id, reply_to_tweet_id, timestamp.isoformat()])
+        replies_data.append([user_tag, tweet_id, reply_to_tweet_id, timestamp])
     return replies_data
 
 # --- SENT MESSAGE relationship ---
@@ -121,13 +115,11 @@ def generate_sent_messages(user_tags, messages_id, num_messages):
     devices = ['iPhone', 'Android', 'Web', 'iPad', 'Desktop']
     operating_systems = ['iOS', 'Android', 'Windows', 'macOS', 'Linux']
     sent_messages_data = []
-    random.shuffle(user_tags) 
-
-    for i in range(num_messages):
-        user_index = i % len(user_tags)
-        user_tag = user_tags[user_index]
-        message_id = messages_id[i]
-
+    
+    for _ in range(num_messages):
+        user_tag = random.choice(user_tags)
+        message_id = random.choice(messages_id)
+        
         timestamp = fake.date_this_decade().isoformat()
         device = random.choice(devices)
         os = random.choice(operating_systems)
@@ -151,20 +143,13 @@ def generate_participates_in_data(user_tags, chat_ids, num_relationships):
 # --- IS FROM relationship ---
 def generate_is_from_data(messages_id, chat_ids):
     is_from_data = []
-    random.shuffle(messages_id)
-    chat_index = 0
-
     for message_id in messages_id:
-        chat_id = chat_ids[chat_index]
+        chat_id = random.choice(chat_ids)
         order = random.randint(1, 100)
         read = random.choice([True, False])
         edited = random.choice([True, False])
 
         is_from_data.append([message_id, chat_id, order, read, edited])
-
-        chat_index = (chat_index + 1) % len(chat_ids)
-        if chat_index == 0:
-            random.shuffle(chat_ids)
 
     return is_from_data
 
