@@ -125,7 +125,7 @@ reactions_list = ['😀', '😂', '😍', '😢', '😠', '👍', '👎', '❤�
 # write USER data to a CSV file
 def write_users_to_csv(csv_file_name, node_count):
     with open(csv_file_name, mode='w', newline='', encoding='utf-8') as file:
-        writer = csv.DictWriter(file, fieldnames=["Tag", "Username", "Blue", "Description", "Birthday", "Birthday", "Joined_on", "Is_profile_public"])
+        writer = csv.DictWriter(file, fieldnames=["Tag", "Username", "Blue", "Description", "Birthday", "Joined_on", "Is_profile_public"])
         writer.writeheader()
         for _ in range(node_count):
             user_data = create_user_data()
