@@ -260,9 +260,13 @@ app.get('/', async (req, res) => {
     const result = await session.run(
       `
       MATCH (t:tweet {Id: $id})
+      MATCH (t)-[rel:TWEETED]->(:user)
+
       SET t.Content = $content
+      SET t.HasMedia = $has_media
+      SET t.HasPoll = $has_poll
       `,
-      { id: data.id, content: data.content}
+      { id: data.id, content: data.content, has_media: data.has_media, has_poll: data.has_poll}
     );
 
     res.status(200).send('Respuesta exitosa');
