@@ -28,7 +28,13 @@ function parseJson(json) {
         likes_amount: json.likes_amount,
         retweets_amount: json.retweets_amount,
         replies_amount: json.replies_amount,
-        location: null // As the JSON object doesn't have a location property, we set it to null
+        location: null, // As the JSON object doesn't have a location property, we set it to null
+        impressions: json.impressions,
+        engagements: json.engagements,
+        detail_expands: json.detail_expands,
+        new_followers: json.new_followers,
+        profile_visits: json.profile_visits,
+        money_generated: json.money_generated,
     };
 }
 

@@ -25,10 +25,6 @@ function convertHashtagsAndMentionsToLinks(content) {
     return newContent;
 }
 
-function handleAnalytics(tweetId) {
-
-}
-
 function handleInteraction(tag, tweetId, type) {
     fetch('http://localhost:3001/interactions', {
         method: 'POST',
@@ -95,6 +91,12 @@ const Tweet = ({data}) => {
         retweets_amount,
         replies_amount,
         location,
+        impressions,
+        engagements,
+        detail_expands,
+        new_followers,
+        profile_visits,
+        money_generated,
     } = data;
 
     const [hasMedia, setHasMedia] = useState(data.has_media);
@@ -139,9 +141,16 @@ const Tweet = ({data}) => {
     const toggleEditForm = () => {
         setIsEditFormVisible(!isEditFormVisible);
     };
-
     function handleEdit(tweetId) {
         toggleEditForm();
+    }
+
+    const [areAnalyticsVisible, setAreAnalyticsVisible] = useState(false);
+    const toggleAnalytics = () => {
+        setAreAnalyticsVisible(!areAnalyticsVisible);
+    };
+    function handleAnalytics(tweetId) {
+        toggleAnalytics();
     }
 
     return (
@@ -198,6 +207,16 @@ const Tweet = ({data}) => {
                         <button>{share}</button>
                     </div>
                 </div>
+                {areAnalyticsVisible && (
+                    <div className="analytics">
+                        <p id={"impressions"}>{impressions} Impressions</p>
+                        <p id={"engagements"}>{engagements} Engagements</p>
+                        <p id={"detail_expands"}>{detail_expands} Detail Expands</p>
+                        <p id={"new_followers"}>{new_followers} New Followers</p>
+                        <p id={"profile_visits"}>{profile_visits} Profile Visits</p>
+                        <p id={"money_generated"}>{money_generated} Money Generated</p>
+                    </div>
+                )}
                 {isEditFormVisible && (
                     <div className="edit-form">
                         <form onSubmit={handleFormSubmit}>
