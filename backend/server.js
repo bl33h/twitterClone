@@ -404,7 +404,8 @@ app.get('/', async (req, res) => {
                       rel.Device = $device,
                       rel.TweetId = $id,
                       rel.UserTag = $tag
-        ON MATCH DELETE rel
+        ON MATCH
+              IF EXISTS(rel) THEN DELETE rel
         `,
         { tag: data.tag, id: data.id, timestamp: fecha}
       );
@@ -421,7 +422,8 @@ app.get('/', async (req, res) => {
                       rel.Content = $content,
                       rel.TweetId = $id,
                       rel.UserTag = $tag
-        ON MATCH DELETE rel
+        ON MATCH 
+              IF EXISTS(rel) THEN DELETE rel
         `,
         { tag: data.tag, id: data.id}
       );
