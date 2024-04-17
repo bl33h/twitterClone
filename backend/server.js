@@ -420,14 +420,15 @@ app.get('/', async (req, res) => {
       const result = await session.run(
         `
         MATCH (m:message {Id: $messageId})
-        SET m.Reactions = CASE WHEN m.Reactions IS NULL OR m.Reactions = ''
-                               THEN $reaction
-                               ELSE reduce(s = m.Reactions, r IN [m.Reactions, $reaction] | s + CASE WHEN r IN split(s, ',') THEN '' ELSE ',' + r END)
-                               END
+        SET m.Reactions = CASE 
+                           WHEN m.Reactions IS NULL OR m.Reactions = '' 
+                           THEN $reaction
+                           ELSE m.Reactions + ',' + $reaction
+                           END
         RETURN m.Id AS messageId, m.Reactions AS updatedReactions
         `,
         { messageId, reaction }
-      );
+      );  
   
       if (result.records.length === 0) {
         res.status(404).send('Message not found');
