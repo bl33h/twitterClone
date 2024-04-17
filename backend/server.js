@@ -285,13 +285,14 @@ app.get('/', async (req, res) => {
   app.post('/new', async (req, res) => {
     const data = req.body;
     const uuidUnico = await generarUUIDUnico(session);
+    const fecha = moment().utc().format('YYYY-MM-DDTHH:mm:ssZ');
     const result = await session.run(
       `
       MATCH (u:user {Tag: $tag})
       CREATE (t:tweet {Money_generated: 0, Impressions: 0, Profile_visits: 0, Content: $content, Hashtags: $hashtags, Id: $id, Detail_expands:0, Engagements: 0, New_followers: 0})
-      CREATE (u)-[:TWEETED {Mentions:$mentions, HasMedia: $has_media, TweetId: $id, HasPoll: $has_poll, UserTag: $tag, TimeStamp: substring(toString(datetime({timezone: 'UTC'})), 0, 24)}]->(t)
+      CREATE (u)-[:TWEETED {Mentions:$mentions, HasMedia: $has_media, TweetId: $id, HasPoll: $has_poll, UserTag: $tag, TimeStamp: datetime($timestamp)}]->(t)
       `,
-      { tag: data.tag, content: data.content, hashtags: data.hashtags, id: uuidUnico, has_media: data.has_media, has_poll: data.has_poll,  mentions: data.mentions }
+      { tag: data.tag, content: data.content, hashtags: data.hashtags, id: uuidUnico, has_media: data.has_media, has_poll: data.has_poll,  mentions: data.mentions, timestamp: fecha }
     );
 
     res.status(200).send('Respuesta exitosa');
@@ -299,23 +300,30 @@ app.get('/', async (req, res) => {
 
   app.post('/modify', async (req, res) => {
     const data = req.body;
+    const fecha = moment().utc().format('YYYY-MM-DDTHH:mm:ssZ');
     const result = await session.run(
       `
       MATCH (u:user {Tag: $tag})
       MATCH (loc:location {Name: $location})
-      MATCH (u)-[locin:LOCATED_IN]->(loc)
-      SET u.Username = $username
-      SET u.Description = $desc
-      SET u.Birthday = $birthday
-      SET locin.CurrentlyIn = true
-      SET locin.LivesThere = true
-      SET locin.LocationId = loc.Id
-      SET locin.UserTag = u.Tag
-      SET locin.TimeStamp = substring(toString(datetime({timezone: 'UTC'})), 0, 24)
+      MERGE (u)-[locin:LOCATED_IN]->(loc)
+      ON CREATE
+        SET u.Username = $username
+        SET u.Description = $desc
+        SET locin.CurrentlyIn = true
+        SET locin.LivesThere = true
+        SET locin.LocationId = loc.Id
+        SET locin.UserTag = u.Tag
+        SET locin.TimeStamp = datetime($timestamp)
+      ON MATCH
+        SET u.Username = $username
+        SET u.Description = $desc
+        SET locin.CurrentlyIn = true
+        SET locin.LocationId = loc.Id
+        SET locin.UserTag = u.Tag
 
       
       `,
-      { tag: data.tag, username: data.username, desc:data.description, birthday: data.birthday, location: data.location}
+      { tag: data.tag, username: data.username, desc:data.description, location: data.location, timestamp: fecha}
     );
 
     res.status(200).send('Respuesta exitosa');
