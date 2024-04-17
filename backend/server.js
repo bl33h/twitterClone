@@ -420,28 +420,28 @@ app.get('/', async (req, res) => {
       const result = await session.run(
         `
         MATCH (m:message {Id: $messageId})
-        SET m.reactions = CASE WHEN m.reactions IS NULL OR m.reactions = ''
+        SET m.Reactions = CASE WHEN m.Reactions IS NULL OR m.Reactions = ''
                                THEN $reaction
-                               ELSE reduce(s = m.reactions, r IN [m.reactions, $reaction] | s + CASE WHEN r IN split(s, ',') THEN '' ELSE ',' + r END)
+                               ELSE reduce(s = m.Reactions, r IN [m.Reactions, $reaction] | s + CASE WHEN r IN split(s, ',') THEN '' ELSE ',' + r END)
                                END
-        RETURN m.Id AS messageId, m.reactions AS updatedReactions
+        RETURN m.Id AS messageId, m.Reactions AS updatedReactions
         `,
         { messageId, reaction }
       );
   
       if (result.records.length === 0) {
-        res.status(404).send('Message not found.');
+        res.status(404).send('Message not found');
       } else {
         const updatedReactions = result.records[0].get('updatedReactions');
         res.status(200).send({
-          message: 'Reaction added correctly.',
+          message: 'Reaction added successfully',
           messageId: result.records[0].get('messageId'),
           reactions: updatedReactions
         });
       }
     } catch (error) {
-      console.error('Error in the aura connection.', error);
-      res.status(500).send('Error processing the request.');
+      console.error('Error in the Aura connection.', error);
+      res.status(500).send('Error processing the request');
     } finally {
       await session.close();
     }
