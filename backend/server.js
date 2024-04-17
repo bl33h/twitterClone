@@ -427,12 +427,9 @@ app.get('/', async (req, res) => {
 
   app.post('/deletet', async (req, res) => {
     const data = req.body;
-    try {
-      const result = await session.run('MATCH (t:tweet {Id: $id} DETACH DELETE t)', { id: data.id });
-      res.send(nodes);
-    } catch (error) {
-      res.status(200).send('Respuesta exitosa');
-    }
+    const result = await session.run('MATCH (t:tweet {Id: $id} DETACH DELETE t)', { id: data.id });
+      
+    res.status(200).send('Respuesta exitosa');
   }); 
 
   app.post('/newmessage', async (req, res) => {
