@@ -15,6 +15,7 @@ function Chat() {
         fetch(`http://localhost:3001/messages/${id}`)
             .then(res => res.json())
             .then(data => {
+                console.log(data);
                 setMessages(data);
             });
     }, [id]);
@@ -31,7 +32,10 @@ function Chat() {
                     <Message key={message.id} {...message} isUserMessage={tag === message.username}/>
                 ))}
             </div>
-            <Sender/>
+            <Sender
+                latest_order={Math.max(...messages.map(message => message.order.low))}
+                chat_id={id}
+            />
         </div>
     )
 }
