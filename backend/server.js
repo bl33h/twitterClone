@@ -322,8 +322,7 @@ app.get('/', async (req, res) => {
     const fecha = moment().utc().format('YYYY-MM-DDTHH:mm:ssZ');
     const result = await session.run(
       `
-      MATCH (u:user {Tag: $tag})
-      MATCH (loc:location {Name: $location})
+      MATCH (u:user {Tag: $tag}, loc:location {Name: $location})
       MERGE (u)-[locin:LOCATED_IN]->(loc)
       ON CREATE
         SET u.Username = $username,
@@ -370,25 +369,35 @@ app.get('/', async (req, res) => {
 
   app.post('/interactions', async (req, res) => {
     const data = req.body;
+    const fecha = moment().utc().format('YYYY-MM-DDTHH:mm:ssZ');
     if (data.type == "LIKED"){
       const result = await session.run(
         `
-        MATCH (u:user {Tag: $tag})
-        MATCH (t:tweet {Id: $id})
+        MATCH (u:user {Tag: $tag}, t:tweet {Id: $id})
         MERGE (u)-[rel:LIKED]->(t)
-        ON CREATE SET rel.TimeStamp = datetime()
-  
-        
+        ON CREATE SET rel.TimeStamp = datetime($timestamp),
+                      rel.OS = $os,
+                      rel.Device = $device,
+                      rel.TweetId = $id,
+                      rel.UserTag = $tag
+        ON MATCH DELETE rel
         `,
-        { tag: data.tag, id: data.id}
+        { tag: data.tag, id: data.id, timestamp: fecha}
       );
     }
     else if (data.type == "RETWEETED"){
       const result = await session.run(
         `
-        MATCH (u:user {Tag: $tag})-[rel:RETWEETED]->(t:tweet {Id: $id})
-  
-        
+        MATCH (u:user {Tag: $tag}, t:tweet {Id: $id})
+        MERGE (u)-[rel:RETWEETED]->(t)
+        ON CREATE SET rel.TimeStamp = datetime($timestamp)
+                      rel.Mentions = $mentions,
+                      rel.HasMedia = $has_media,
+                      rel.HasPoll = $has_poll,
+                      rel.Content = $content,
+                      rel.TweetId = $id,
+                      rel.UserTag = $tag
+        ON MATCH DELETE rel
         `,
         { tag: data.tag, id: data.id}
       );
@@ -396,7 +405,16 @@ app.get('/', async (req, res) => {
     else if (data.type == "REPLIES_TO"){
       const result = await session.run(
         `
-        MATCH (u:user {Tag: $tag})-[rel:REPLIES_TO]->(t:tweet {Id: $id})
+        MATCH (u:user {Tag: $tag}, t:tweet {Id: $id})
+        MERGE (u)-[rel:REPLIES_TO]->(t)
+        ON CREATE SET rel.TimeStamp = datetime($timestamp)
+                      rel.Mentions = $mentions,
+                      rel.HasMedia = $has_media,
+                      rel.HasPoll = $has_poll,
+                      rel.Content = $content,
+                      rel.TweetId = $id,
+                      rel.UserTag = $tag
+        ON MATCH DELETE rel
   
         
         `,
@@ -428,9 +446,7 @@ app.get('/', async (req, res) => {
     `, { id: id, content: data.content, mentions: data.mentions, });
 
     const result1 = await session.run(`
-    MATCH (c:chat {Id: $chat})
-    MATCH (u:user {Tag: $tag})
-    MATCH (m:message {Id: $id})
+    MATCH (c:chat {Id: $chat}, u:user {Tag: $tag}, m:message {Id: $id})
     CREATE (u)-[s:SENT {MessageId:$id, TimeStamp: datetime($timestamp), UserTag: $tag, Device: $device, OS: $os}]->(m)
     CREATE (c)<-[r:IS_FROM {Order: 0, Read: false, Edited: false, MessageId: $id, ChatId:$chat}]-(m)
 
