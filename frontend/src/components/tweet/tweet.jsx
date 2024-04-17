@@ -69,13 +69,20 @@ const Tweet = ({data}) => {
         location,
     } = data;
 
+    const [hasMedia, setHasMedia] = useState(data.has_media);
+    const [hasPoll, setHasPoll] = useState(data.has_poll);
+
     const handleFormSubmit = (event) => {
         event.preventDefault();
 
         const data = {
             id: id,
             content: editedContent,
+            has_media: hasMedia,
+            has_poll: hasPoll
         };
+
+        console.log('Data:', data);
 
         // Make POST API call
         fetch('http://localhost:3001/modifyt', {
@@ -169,6 +176,15 @@ const Tweet = ({data}) => {
                             <label>
                                 Content:
                                 <textarea value={editedContent} onChange={e => setEditedContent(e.target.value)}/>
+                            </label>
+                            <label>
+                                <input type="checkbox" checked={hasMedia}
+                                       onChange={e => setHasMedia(e.target.checked)}/>
+                                Media
+                            </label>
+                            <label>
+                                <input type="checkbox" checked={hasPoll} onChange={e => setHasPoll(e.target.checked)}/>
+                                Poll
                             </label>
                             <button type="submit">Save</button>
                         </form>
