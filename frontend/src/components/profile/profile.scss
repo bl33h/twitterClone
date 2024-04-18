@@ -45,6 +45,11 @@
           color: darken($text-color, 20%);
         }
 
+        svg {
+          margin-top: 0.5em;
+          width: 1em;
+          fill: $text-color;
+        }
       }
 
       .description {

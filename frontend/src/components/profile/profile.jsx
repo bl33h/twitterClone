@@ -129,8 +129,8 @@ function Profile() {
                     <div className={"names"}>
                         <span id={"username"}>{profile.username}</span>
                         <span id={"tag"}>@{profile.tag}</span>
-                        {profile.is_blue && verified}
-                        {profile.is_profile_public && privateAccount}
+                        {!profile.is_blue && verified}
+                        {!profile.is_profile_public && privateAccount}
                     </div>
                     <br/>
                     <div className={"description"}>
